@@ -1,0 +1,50 @@
+/* Keep existing styles */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+}
+
+.button-container {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 200px;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #0077C4;
+    color: white;
+    padding: 20px 40px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 8px;
+    /* New styles for background images */
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    margin-top: 20px;    
+}
+
+button:hover {
+    background-color: #0076c493;
+}
+
