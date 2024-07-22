@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main Page</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <h1>CCBIO Bioinformatics Workflow</h1>    
     <div>
-        <img src="{{ url_for('static', filename='images/bioinfo.png') }}" alt="Bioinformatics Workflow" style="max-width: 60%; height: auto;">
+        <img src="static/images/bioinfo.png" alt="Bioinformatics Workflow" style="max-width: 60%; height: auto;">
     </div>    
     <div class="button-container">
-        <button onclick="location.href='/homolog_discovery'">Phylogenetic Analysis</button>
-        <button onclick="location.href='/molecular_modeling'">Molecular Modeling</button>
-        <button onclick="location.href='/variant_selection'">Variant Selection</button>       
+        <button onclick="location.href='homolog_discovery.html'">Phylogenetic Analysis</button>
+        <button onclick="location.href='molecular_modeling.html'">Molecular Modeling</button>
+        <button onclick="location.href='variant_selection.html'">Variant Selection</button>       
     </div>
 </body>
 </html>
