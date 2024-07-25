@@ -2,7 +2,7 @@
 
 ## Code and databases for the publication: "Nature’s Diverse Biocatalytic Toolbox for Hydrolysis of Lactams and Cyclic Imides"
 
-![image](https://github.com/user-attachments/assets/2d5b91d4-3c0e-4532-8168-1bcfbe4535d8)
+![image](https://github.com/user-attachments/assets/33f5a252-cd52-4b03-b85d-a35f022a7b8f)
 
 
 ## Background
