@@ -6,16 +6,51 @@
     <title>CCBIO CyclAmidImid</title>
     <link rel="stylesheet" href="static/style.css">
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Fixed header styling */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Ensure it stays above other content */
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        /* Container for buttons */
+        .button-wrapper {
+            flex: 1;
+            overflow-y: auto; /* Makes the container scrollable */
+            padding: 80px 20px 60px; /* Add padding to account for fixed header and footer */
+            display: flex;
+            justify-content: center;
+        }
+
         /* Styling for buttons in the main section */
         .button-container {
             display: flex;
-            flex-wrap: wrap; /* Allows buttons to wrap to the next line if needed */
+            flex-direction: column;
             gap: 10px; /* Space between buttons */
-            justify-content: center; /* Center buttons horizontally */
-            margin-bottom: 100px; /* Add space for the footer */
+            align-items: center; /* Center buttons horizontally */
         }
+
         .button-container button {
-            padding: 10px 20px;
+            padding: 10px;
             border: none;
             border-radius: 5px;
             color: white;
@@ -29,19 +64,23 @@
             font-size: 16px; /* Adjust the font size if needed */
             position: relative;
             box-sizing: border-box;
-            min-width: 200px; /* Adjust based on the largest button */
-            min-height: 250px; /* Adjust based on the largest button */
+            /* Width and height will be set dynamically by JavaScript */
+            min-height: 250px; /* Set a fixed height */
         }
+
         .button-container button:hover {
             background-color: #0056b3;
         }
+
         .button-container button img {
             max-width: 100px; /* Adjust the size of the image as needed */
             margin-bottom: 10px; /* Space between image and text */
         }
+
         .bold-number {
             font-weight: bold;
         }
+
         /* Footer styling */
         .footer {
             position: fixed;
@@ -54,56 +93,80 @@
             color: white;
             box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
         }
+
         .footer button {
             padding: 5px 10px; /* Smaller padding for footer buttons */
             font-size: 14px; /* Smaller font size for footer buttons */
             min-width: 100px; /* Adjust based on desired footer button size */
             min-height: 40px; /* Adjust based on desired footer button size */
         }
+
         .footer button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides</h1>    
-    <div>
-        <img src="./docs/static/banner.svg" alt="" style="max-width: 60%; height: auto;">
-    </div>    
-    <div class="button-container">
-        <button onclick="location.href='homolog_discovery.html'">
-            <img src="./docs/static/ser_lacta.png" alt="">
-            <span class="bold-number">3.40.710.10</span><br>
-            DD-peptidase/β-Lactamase superfamily<br>
-            EC: 3.5.2.6<br>
-            e.g. serine β-Lactamase (class A, C, D)
-        </button>
-        <button onclick="location.href='homolog_discovery.html'">
-            <img src="./docs/static/calb_yellow.png" alt="">
-            <span class="bold-number">3.40.50.1820</span><br>
-            α/β-Hydrolases<br>
-            EC: 3.5.2.B3<br>
-            e.g. (−)-γ-lactamases
-        </button>         
-        <button onclick="location.href='homolog_discovery.html'">
-            <img src="./docs/static/amidase_signature.png" alt="">
-            <span class="bold-number">3.90.1300.10</span><br>
-            Amidase signature family<br>
-            EC: 3.5.2.B2<br>
-            e.g. (+)-γ-lactamases
-        </button>
-        <button onclick="location.href='homolog_discovery.html'">
-            <img src="/docs/static/calb_yellow.png" alt="">
-            <span class="bold-number">3.40.50.1820</span><br>
-            α/β-Hydrolases<br>
-            EC: 3.5.2.B3<br>
-            e.g. (−)-γ-lactamases
-        </button>        
+    <div class="header">
+        <h1>Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides</h1>
+    </div>
+    
+    <div class="button-wrapper">
+        <div class="button-container">
+            <button onclick="location.href='homolog_discovery.html'">
+                <img src="./static/ser_lacta.png" alt="">
+                <span class="bold-number">3.40.710.10</span><br>
+                DD-peptidase/β-Lactamase superfamily<br>
+                EC: 3.5.2.6<br>
+                e.g. (Serine) β-Lactamase (class A, C, D)
+            </button>
+            <button onclick="location.href='homolog_discovery.html'">
+                <img src="./static/m_lacta.png" alt="">
+                <span class="bold-number">3.40.50.1820</span><br>
+                Ribonuclease Z/Hydroxyacylglutathione hydrolase-like<br>
+                EC: 3.5.2.6<br>
+                e.g. (Metallo) β-Lactamase (class B)
+            </button>         
+            <button onclick="location.href='homolog_discovery.html'">
+                <img src="./static/amidase_signature.png" alt="">
+                <span class="bold-number">3.90.1300.10</span><br>
+                Amidase signature family<br>
+                EC: 3.5.2.B2<br>
+                e.g. (+)-γ-lactamases
+            </button>
+            <button onclick="location.href='homolog_discovery.html'">
+                <img src="./static/calb_yellow.png" alt="">
+                <span class="bold-number">3.40.50.1820</span><br>
+                α/β-Hydrolases<br>
+                EC: 3.5.2.B3<br>
+                e.g. (−)-γ-lactamases
+            </button>        
+        </div>
     </div>
 
     <div class="footer">
         <button onclick="window.location.href='https://www.github.com/ccbiozhaw/CyclAmidImid'">GitHub</button>
         <button onclick="window.location.href='imprint.html'">Imprint</button>
     </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const buttons = document.querySelectorAll('.button-container button');
+            let maxWidth = 0;
+            
+            // Find the maximum width
+            buttons.forEach(button => {
+                const buttonWidth = button.getBoundingClientRect().width;
+                if (buttonWidth > maxWidth) {
+                    maxWidth = buttonWidth;
+                }
+            });
+
+            // Apply the maximum width to all buttons
+            buttons.forEach(button => {
+                button.style.width = `${maxWidth}px`;
+            });
+        });
+    </script>
 </body>
 </html>
