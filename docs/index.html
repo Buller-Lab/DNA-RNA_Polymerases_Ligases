@@ -12,9 +12,9 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background-color: #f0f0f0; /* Background color from style.css */
         }
 
-        /* Fixed header styling */
         .header {
             position: fixed;
             top: 0;
@@ -24,30 +24,31 @@
             text-align: center;
             padding: 10px 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Ensure it stays above other content */
+            z-index: 1000;
         }
 
         h1 {
             margin: 0;
             font-size: 24px;
+            color: #333; /* Color from style.css */
         }
 
-        /* Main content styling */
         .main-content {
-            margin-top: 60px; /* Adjust margin to avoid overlap with header */
+            margin-top: 70px; /* Adjusted margin to avoid overlap with header */
             padding: 20px;
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            overflow: hidden; /* Prevent scrollbars */
+            overflow: hidden;
         }
 
         .button-container {
             display: flex;
-            flex-wrap: wrap; /* Allow buttons to wrap to the next line */
+            flex-wrap: wrap; /* Allow buttons to wrap */
             gap: 10px; /* Space between buttons */
-            justify-content: center; /* Center buttons horizontally */
+            justify-content: center;
+            margin: 0; /* Remove margin conflicts */
         }
 
         .button-container button {
@@ -65,8 +66,8 @@
             font-size: 16px;
             box-sizing: border-box;
             min-height: 250px;
-            width: 100%; /* Make button width responsive */
-            max-width: 300px; /* Limit maximum width for larger screens */
+            width: 100%; /* Responsive width */
+            max-width: 300px; /* Limit width */
         }
 
         .button-container button:hover {
@@ -79,11 +80,6 @@
             margin-bottom: 10px;
         }
 
-        .bold-number {
-            font-weight: bold;
-        }
-
-        /* Footer styling */
         .footer {
             position: fixed;
             bottom: 0;
