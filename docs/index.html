@@ -46,7 +46,10 @@
         .gallery-container {
             position: relative;
             width: 100%;
+            max-width: 100%;
             overflow: hidden;
+            display: flex;
+            align-items: center;
         }
 
         .arrow-left, .arrow-right {
@@ -80,7 +83,7 @@
             overflow-x: auto;
             padding: 10px;
             scroll-behavior: smooth;
-            width: 100%;
+            flex: 1;
         }
 
         .button-container::-webkit-scrollbar {
@@ -162,7 +165,6 @@
     <div class="main-content">
         <div class="gallery-container">
             <div class="arrow-left" onclick="scrollLeft()">&#10094;</div>
-            <div class="arrow-right" onclick="scrollRight()">&#10095;</div>
             <div class="button-container">
                 <button onclick="location.href='homolog_discovery.html'">
                     <img src="./static/ser_lacta.png" alt="">
@@ -212,8 +214,17 @@
                     Glycoside hydrolase/ deacetylase<br>
                     EC: 3.5.2.5, 3.5.2.18<br>
                     e.g. allantoinase/enamidase
-                </button>                                   
+                </button>           
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/barbiturase.png" alt="">
+                    <span class="bold-number">3.20.20.370</span><br>
+                    Cyanuric acid hydrolase/Barbiturase RU A / RU B / RU C<br>
+                    EC: 3.5.2.1, 3.5.2.15<br>
+                    e.g. barbiturase/cyanuric acid hydrolase
+                </button>                                            
             </div>
+            <div class="arrow-left" onclick="scrollLeft()">&#10094;</div>
+            <div class="arrow-right" onclick="scrollRight()">&#10095;</div>
         </div>
     </div>
 
