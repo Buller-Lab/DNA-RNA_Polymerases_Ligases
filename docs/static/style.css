@@ -1,50 +1,257 @@
-/* Keep existing styles */
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 20px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCBIO CyclAmidImid</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* Override external styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-h1 {
-    color: #333;
-}
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
 
-.button-container {
-    margin-top: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 200px;
-}
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
 
-.top-buttons {
-    display: flex;
-    justify-content: space-between;
-    width: 300px;
-    margin-bottom: 20px;
-}
+        .main-content {
+            margin-top: 70px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
 
-button {
-    background-color: #0077C4;
-    color: white;
-    padding: 20px 40px;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    border-radius: 8px;
-    /* New styles for background images */
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    margin-left: 20px;
-    margin-top: 20px;    
-}
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
 
-button:hover {
-    background-color: #0076c493;
-}
+        .arrow-left, .arrow-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1001;
+        }
 
+        .arrow-left {
+            left: 0;
+        }
+
+        .arrow-right {
+            right: 0;
+        }
+
+        .arrow-left:hover, .arrow-right:hover {
+            background-color: #0056b3;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px;
+            scroll-behavior: smooth;
+            flex: 1;
+            margin: 0; /* Override margin */
+        }
+
+        .button-container::-webkit-scrollbar {
+            display: none; /* Hide scrollbar for WebKit browsers */
+        }
+
+        .button-container button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #007bff;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-sizing: border-box;
+            min-height: 250px;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0; /* Override margin */
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .button-container button img {
+            width: 50%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 1200px) {
+            .button-container button {
+                max-width: 45%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-container button {
+                max-width: 90%;
+            }
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #007bff;
+            text-align: center;
+            padding: 10px 0;
+            color: white;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer button {
+            padding: 5px 10px;
+            font-size: 14px;
+            min-width: 100px;
+            min-height: 40px;
+        }
+
+        .footer button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides</h1>
+    </div>
+    
+    <div class="main-content">
+        <div class="gallery-container">
+            <div class="arrow-left" onclick="scrollLeft()">&#10094;</div>
+            <div class="button-container">
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/ser_lacta.png" alt="">
+                    <span class="bold-number">3.40.710.10</span><br>
+                    DD-peptidase/β-Lactamase superfamily<br>
+                    EC: 3.5.2.6<br>
+                    e.g. (Serine) β-Lactamase (class A, C, D)
+                </button>
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/m_lacta.png" alt="">
+                    <span class="bold-number">3.40.50.1820</span><br>
+                    Ribonuclease Z/Hydroxyacylglutathione hydrolase-like<br>
+                    EC: 3.5.2.6<br>
+                    e.g. (Metallo) β-Lactamase (class B)
+                </button>         
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/amidase_signature.png" alt="">
+                    <span class="bold-number">3.90.1300.10</span><br>
+                    Amidase signature family<br>
+                    EC: 3.5.2.B2<br>
+                    e.g. (+)-γ-lactamases
+                </button>
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/calb_yellow.png" alt="">
+                    <span class="bold-number">3.40.50.1820</span><br>
+                    α/β-Hydrolases<br>
+                    EC: 3.5.2.B3<br>
+                    e.g. (−)-γ-lactamases
+                </button>        
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/oplab.png" alt="">
+                    <span class="bold-number">missing in CATH</span><br>
+                    Hydantoinase/Oxoprolinase family<br>
+                    EC: 3.5.2.9, 3.5.2.14<br>
+                    e.g. 5-oxoprolinase (ATP-hydrolysing)
+                </button>         
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/metal_dep_hydrol.png" alt="">
+                    <span class="bold-number">3.20.20.140</span><br>
+                    Metal-dependent hydrolases<br>
+                    EC: 3.5.2.2, 3.5.2.3, 3.5.2.4, 3.5.2.18<br>
+                    e.g. dihydropyrimidinase/hydantoinase
+                </button>  
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/allantoinase.png" alt="">
+                    <span class="bold-number">3.20.20.370</span><br>
+                    Glycoside hydrolase/ deacetylase<br>
+                    EC: 3.5.2.5, 3.5.2.18<br>
+                    e.g. allantoinase/enamidase
+                </button>           
+                <button onclick="location.href='homolog_discovery.html'">
+                    <img src="./static/barbiturase.png" alt="">
+                    <span class="bold-number">3.20.20.370</span><br>
+                    Cyanuric acid hydrolase/Barbiturase RU A / RU B / RU C<br>
+                    EC: 3.5.2.1, 3.5.2.15<br>
+                    e.g. barbiturase/cyanuric acid hydrolase
+                </button>                                            
+            </div>
+            <div class="arrow-left" onclick="scrollLeft()">&#10094;</div>
+            <div class="arrow-right" onclick="scrollRight()">&#10095;</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button onclick="window.location.href='https://www.github.com/ccbiozhaw/CyclAmidImid'">GitHub</button>
+        <button onclick="window.location.href='imprint.html'">Imprint</button>
+    </div>
+
+    <script>
+        function scrollLeft() {
+            document.querySelector('.button-container').scrollBy({
+                left: -300,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollRight() {
+            document.querySelector('.button-container').scrollBy({
+                left: 300,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>
