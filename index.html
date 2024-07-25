@@ -6,20 +6,61 @@
     <title>CCBIO CyclAmidImid</title>
     <link rel="stylesheet" href="static/style.css">
     <style>
-        /* Additional styling for new buttons */
+        /* Styling for buttons in the main section */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap; /* Allows buttons to wrap to the next line if needed */
+            gap: 10px; /* Space between buttons */
+            justify-content: center; /* Center buttons horizontally */
+            margin-bottom: 100px; /* Add space for the footer */
+        }
         .button-container button {
             padding: 10px 20px;
-            margin: 5px;
             border: none;
             border-radius: 5px;
             color: white;
             background-color: #007bff;
             text-align: center;
             text-decoration: none;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             cursor: pointer;
+            font-size: 16px; /* Adjust the font size if needed */
+            position: relative;
+            box-sizing: border-box;
+            min-width: 200px; /* Adjust based on the largest button */
+            min-height: 250px; /* Adjust based on the largest button */
         }
         .button-container button:hover {
+            background-color: #0056b3;
+        }
+        .button-container button img {
+            max-width: 100px; /* Adjust the size of the image as needed */
+            margin-bottom: 10px; /* Space between image and text */
+        }
+        .bold-number {
+            font-weight: bold;
+        }
+        /* Footer styling */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #007bff;
+            text-align: center;
+            padding: 10px 0;
+            color: white;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .footer button {
+            padding: 5px 10px; /* Smaller padding for footer buttons */
+            font-size: 14px; /* Smaller font size for footer buttons */
+            min-width: 100px; /* Adjust based on desired footer button size */
+            min-height: 40px; /* Adjust based on desired footer button size */
+        }
+        .footer button:hover {
             background-color: #0056b3;
         }
     </style>
@@ -30,9 +71,23 @@
         <img src="/docs/static/images/banner.svg" alt="" style="max-width: 60%; height: auto;">
     </div>    
     <div class="button-container">
-        <button onclick="location.href='homolog_discovery.html'">CATH ID: 3.40.50.1820<br>α/β-Hydrolases</button>
-        <button onclick="location.href='molecular_modeling.html'">Molecular Modeling</button>
-        <button onclick="location.href='variant_selection.html'">Variant Selection</button>
+        <button onclick="location.href='homolog_discovery.html'">
+            <img src="amidase_signature.png" alt="Description of First Image">
+            <span class="bold-number">3.90.1300.10</span><br>
+            Amidase signature family<br>
+            EC: 3.5.2.B2<br>
+            e.g. (+)-γ-lactamases
+        </button>
+        <button onclick="location.href='homolog_discovery.html'">
+            <img src="calb_yellow.png" alt="Description of Second Image">
+            <span class="bold-number">3.40.50.1820</span><br>
+            α/β-Hydrolases<br>
+            EC: 3.5.2.B3<br>
+            e.g. (−)-γ-lactamases
+        </button>        
+    </div>
+
+    <div class="footer">
         <button onclick="window.location.href='https://www.github.com/ccbiozhaw/CyclAmidImid'">GitHub</button>
         <button onclick="window.location.href='imprint.html'">Imprint</button>
     </div>
