@@ -69,7 +69,7 @@
         }
 
         .button-container::-webkit-scrollbar {
-            display: none; /* Hide scrollbar for WebKit browsers */
+            display: auto; /* Hide scrollbar for WebKit browsers */
         }
 
         .button-container button {
@@ -237,20 +237,5 @@
         <button onclick="window.location.href='imprint.html'">Imprint</button>
     </div>
 
-    <script>
-        function scrollLeft() {
-            document.querySelector('.button-container').scrollBy({
-                left: -300,
-                behavior: 'smooth'
-            });
-        }
-
-        function scrollRight() {
-            document.querySelector('.button-container').scrollBy({
-                left: 300,
-                behavior: 'smooth'
-            });
-        }
-    </script>
 </body>
 </html>
