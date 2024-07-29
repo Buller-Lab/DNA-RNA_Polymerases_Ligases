@@ -56,34 +56,11 @@
             align-items: center;
         }
 
-        .arrow-left, .arrow-right {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 24px;
-            z-index: 1001;
-        }
-
-        .arrow-left {
-            left: 0;
-        }
-
-        .arrow-right {
-            right: 0;
-        }
-
-        .arrow-left:hover, .arrow-right:hover {
-            background-color: #0056b3;
-        }
 
         .button-container {
             display: flex;
             gap: 10px;
+            overflow-y: auto;
             overflow-x: auto;
             padding: 10px;
             scroll-behavior: smooth;
