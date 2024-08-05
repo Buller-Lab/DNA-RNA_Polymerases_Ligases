@@ -271,10 +271,10 @@
             <div class="container">     
                 <div class="sidebar">
                     <div style="margin-top: 10px; font-size: 2em; font-weight: bold;">
-                        CATH:<br>3.40.710.10
+                        CATH:<br>3.40.50.1820
                     </div>              
                     <div>
-                        <img src="./static/ser_lacta.png" alt="" style="max-width: 100%;">
+                        <img src="./static/m_lacta.png" alt="" style="max-width: 100%;">
                     </div>
                     <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
                         Filters
@@ -421,7 +421,7 @@
                     });
                 }
             
-                fetch('./static/DD_peptidase.cyjs)
+                fetch('./static/Ribonuclease_like.cyjs')
                     .then(response => response.json())
                     .then(data => {
                         let elements = data.elements.nodes.concat(data.elements.edges);
