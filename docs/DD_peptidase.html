@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cytoscape.js Visualization</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/noUiSlider@15.8.6/dist/nouislider.min.css">
     <style>
         /* Global styles */
         body {
@@ -34,9 +35,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-align: center;
-        }
-        .sidebar p, .sidebar h1, .sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6 {
             text-align: center;
         }
 
@@ -194,82 +192,60 @@
         }
 
         .progress-bar-container {
-            width: 80%; /* Adjust width as needed */
+            width: 80%; /* Adjust as needed */
+            height: 20px;
             background-color: #f3f3f3;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin: 10px auto; /* Center horizontally with auto margins */
-            display: none; /* Initially hide progress bar container */
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
         }
 
         .progress-bar {
+            height: 100%;
             width: 0;
-            height: 20px;
             background-color: #0077C4;
-            border-radius: 5px;
-        }
-
-        .spaced-div {
-            margin-bottom: 20px; /* Adjust the value as needed */
+            border-radius: 10px;
         }
 
         .slider-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .slider-container input[type="range"] {
-            margin-right: 1em;
-        }
-
-        .slider-container span {
-            min-width: 50px;
-            text-align: right;
+            margin: 20px 0;
+            height: 15px; /* Adjust height as needed */
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.20.1/dist/cytoscape.min.js"></script>
 </head>
 <body>
-    <div class="container">     
+    <div class="container">
         <div class="sidebar">
-            <div style="margin-top: 10px; font-size: 2em; font-weight: bold;">
-                CATH:<br>3.40.710.10
-            </div>              
-            <div>
-                <img src="./static/ser_lacta.png" alt="" style="max-width: 100%;">
-            </div>
-            <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
-                Filters
-            </div>
+            <h1>Filters</h1>
             <div class="spaced-div">
                 <label for="filter-annotation">Annotation:</label>
                 <select id="filter-annotation">
                     <option value="">Select an annotation</option>
-                    <!-- Options will be populated dynamically -->
+                    <!-- Options will be dynamically populated -->
                 </select>
             </div>
 
             <div class="spaced-div">
                 <label for="filter-length">Length (Range):</label>
-                <div class="slider-container">
-                    <input type="range" id="filter-length-slider" min="0" max="100" value="50">
-                    <span id="filter-length-value">50</span>
+                <div id="filter-length-slider" class="slider-container"></div>
+                <div class="range-label">
+                    <span id="filter-length-min-value">0</span> - <span id="filter-length-max-value">100</span>
                 </div>
             </div>
 
             <div class="spaced-div">
                 <label for="filter-SeqID">SeqID (Range):</label>
-                <div class="slider-container">
-                    <input type="range" id="filter-seqID-slider" min="0" max="100" value="50">
-                    <span id="filter-seqID-value">50</span>
+                <div id="filter-seqID-slider" class="slider-container"></div>
+                <div class="range-label">
+                    <span id="filter-seqID-min-value">0</span> - <span id="filter-seqID-max-value">100</span>
                 </div>
             </div>
-            <div class="spaced-div">
-                <button id="apply-filters">Apply Filters</button>
-            </div>                           
-            <div style="margin-top: 10px; text-align: center;">    
-                <button id="reset-graph">Reset Graph</button>
-            </div>   
+
+            <button id="apply-filters">Apply Filters</button>
+            <button id="reset-graph">Reset Graph</button>
         </div>
 
         <div class="network-container">
@@ -292,6 +268,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/noUiSlider@15.8.6/dist/nouislider.min.js"></script>
     <script>
         // Initialize Cytoscape instance
         const cy = cytoscape({
@@ -365,40 +342,68 @@
 
         function applyFilters() {
             const annotation = document.getElementById('filter-annotation').value;
-            const length = parseInt(document.getElementById('filter-length-value').textContent);
-            const seqID = parseInt(document.getElementById('filter-seqID-value').textContent);
+            const lengthValues = document.getElementById('filter-length-slider').noUiSlider.get();
+            const seqIDValues = document.getElementById('filter-seqID-slider').noUiSlider.get();
+
+            const lengthMin = parseFloat(lengthValues[0]);
+            const lengthMax = parseFloat(lengthValues[1]);
+            const seqIDMin = parseFloat(seqIDValues[0]);
+            const seqIDMax = parseFloat(seqIDValues[1]);
 
             const filteredData = data.filter(item => 
                 (annotation ? item.annotation === annotation : true) &&
-                item.length <= length &&
-                item.seqID <= seqID
+                item.length >= lengthMin &&
+                item.length <= lengthMax &&
+                item.seqID >= seqIDMin &&
+                item.seqID <= seqIDMax
             );
 
             updateTable(filteredData);
             // Update Cytoscape graph as needed
         }
 
-        document.getElementById('filter-length-slider').addEventListener('input', (event) => {
-            const value = event.target.value;
-            document.getElementById('filter-length-value').textContent = value;
-            applyFilters();
-        });
-
-        document.getElementById('filter-seqID-slider').addEventListener('input', (event) => {
-            const value = event.target.value;
-            document.getElementById('filter-seqID-value').textContent = value;
-            applyFilters();
-        });
-
         document.getElementById('apply-filters').addEventListener('click', applyFilters);
 
         document.getElementById('reset-graph').addEventListener('click', () => {
             document.getElementById('filter-annotation').value = '';
-            document.getElementById('filter-length-slider').value = 50;
-            document.getElementById('filter-seqID-slider').value = 50;
-            document.getElementById('filter-length-value').textContent = '50';
-            document.getElementById('filter-seqID-value').textContent = '50';
+            document.getElementById('filter-length-slider').noUiSlider.set([0, 100]);
+            document.getElementById('filter-seqID-slider').noUiSlider.set([0, 100]);
             applyFilters();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const lengthSlider = document.getElementById('filter-length-slider');
+            const seqIDSlider = document.getElementById('filter-seqID-slider');
+
+            noUiSlider.create(lengthSlider, {
+                start: [0, 100],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': 100
+                }
+            });
+
+            noUiSlider.create(seqIDSlider, {
+                start: [0, 100],
+                connect: true,
+                range: {
+                    'min': 0,
+                    'max': 100
+                }
+            });
+
+            lengthSlider.noUiSlider.on('update', function(values, handle) {
+                document.getElementById('filter-length-min-value').textContent = Math.round(values[0]);
+                document.getElementById('filter-length-max-value').textContent = Math.round(values[1]);
+                applyFilters();
+            });
+
+            seqIDSlider.noUiSlider.on('update', function(values, handle) {
+                document.getElementById('filter-seqID-min-value').textContent = Math.round(values[0]);
+                document.getElementById('filter-seqID-max-value').textContent = Math.round(values[1]);
+                applyFilters();
+            });
         });
 
         fetchData().then(data => {
