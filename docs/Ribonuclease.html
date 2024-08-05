@@ -421,7 +421,7 @@
                     });
                 }
             
-                fetch('./static/DD_peptidase.cyjs')
+                fetch('./static/DD_peptidase.cyjs)
                     .then(response => response.json())
                     .then(data => {
                         let elements = data.elements.nodes.concat(data.elements.edges);
