@@ -282,223 +282,219 @@
                 </table>
             </div>
         
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                var cy = window.cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: [], // Your elements data will be loaded dynamically
-                    layout: { name: 'grid', fit: true, padding: 20 },
-                    style: [] // Your stylesheet for node styles
-                });
-            
-                var loadingIndicator = document.getElementById('loading');
-                var progressBar = document.getElementById('progress-bar');
-                var progressBarContainer = document.querySelector('.progress-bar-container');
-            
-                function updateTable(selectedNodes) {
-                    var tableBody = document.querySelector('#node-table tbody');
-                    tableBody.innerHTML = '';
-                
-                    selectedNodes.forEach(function(node) {
-                        var row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${node.id()}</td>
-                            <td>${node.data('name')}</td>
-                            <td>${node.data('Length')}</td>
-                            <td>${node.data('SeqID_Seed')}</td>
-                            <td>${node.data('Organism')}</td>
-                            <td>${node.data('Color')}</td>
-                            <td>${node.data('Sequence')}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                
-                    populateAnnotationDropdown();
-                }
-            
-                function populateAnnotationDropdown() {
-                    var dropdown = document.querySelector('#filter-annotation');
-                    var annotations = new Set();
-                
-                    cy.nodes().forEach(function(node) {
-                        annotations.add(node.data('Color'));
-                    });
-                
-                    dropdown.innerHTML = '<option value="">Select an annotation</option>'; // Reset dropdown
-                
-                    annotations.forEach(function(annotation) {
-                        var option = document.createElement('option');
-                        option.value = annotation;
-                        option.textContent = annotation;
-                        dropdown.appendChild(option);
-                    });
-                }
-            
-                function updateNetwork(nodes) {
-                    cy.elements().hide();
-                    nodes.forEach(node => {
-                        node.show();
-                        node.connectedEdges().show();
-                    });
-                    cy.fit();
-                }
-            
-                function loadDataInChunks(data, chunkSize) {
-                    return new Promise((resolve) => {
-                        let index = 0;
-                    
-                        function loadChunk() {
-                            if (index < data.length) {
-                                let chunk = data.slice(index, index + chunkSize);
-                                cy.add(chunk);
-                                index += chunkSize;
-                                let progress = (index / data.length) * 100;
-                                progressBar.style.width = progress + '%';
-                                if (!progressBarContainer.style.display || progressBarContainer.style.display === 'none') {
-                                    progressBarContainer.style.display = 'block'; // Show progress bar container
-                                }
-                            
-                                requestAnimationFrame(loadChunk);
-                            } else {
-                                resolve();
-                            }
-                        }
-                    
-                        loadChunk();
-                    });
-                }
-            
-                fetch('./static/petase_60.cyjs')
-                    .then(response => response.json())
-                    .then(data => {
-                        let elements = data.elements.nodes.concat(data.elements.edges);
-                        let chunkSize = 100;
-                        loadDataInChunks(elements, chunkSize).then(() => {
-                            cy.fit();
-                            updateTable(cy.nodes());
-                            loadingIndicator.style.display = 'none';
-                            progressBarContainer.style.display = 'none'; // Hide progress bar container when done
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading cyjs file:', error);
-                        loadingIndicator.textContent = 'Error loading network data';
-                    });
-                
-                function sortTable(columnIndex) {
-                    var table = document.querySelector('#node-table');
-                    var rows = Array.from(table.rows).slice(1);
-                    var sortFactor = 1;
-                    var currentClass = table.rows[0].cells[columnIndex].className;
-                
-                    if (currentClass.includes('asc')) {
-                        table.rows[0].cells[columnIndex].classList.remove('asc');
-                        table.rows[0].cells[columnIndex].classList.add('desc');
-                        sortFactor = -1;
-                    } else if (currentClass.includes('desc')) {
-                        table.rows[0].cells[columnIndex].classList.remove('desc');
-                        table.rows[0].cells[columnIndex].classList.add('asc');
-                    } else {
-                        table.rows[0].cells[columnIndex].classList.add('asc');
-                    }
-                
-                    rows.sort((a, b) => {
-                        var aValue = a.cells[columnIndex].textContent.trim();
-                        var bValue = b.cells[columnIndex].textContent.trim();
-                        return (parseInt(aValue) - parseInt(bValue)) * sortFactor;
-                    });
-                
-                    rows.forEach(row => table.appendChild(row));
-                }
-            
-                document.querySelectorAll('#node-table th').forEach((header, index) => {
-                    header.addEventListener('click', () => sortTable(index));
-                });
-            
-                cy.on('select', 'node', function(event) {
-                    var selectedNodes = cy.$('node:selected');
-                    updateTable(selectedNodes);
-                });
-            
-                cy.on('unselect', 'node', function(event) {
-                    var allNodes = cy.nodes();
-                    updateTable(allNodes);
-                });
-            
-                var filterAnnotationDropdown = document.querySelector('#filter-annotation');
-                var filterLengthFromInput = document.querySelector('#filter-length-from');
-                var filterLengthToInput = document.querySelector('#filter-length-to');
-                var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
-                var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
-            
-                filterAnnotationDropdown.addEventListener('change', handleFilter);
-                filterLengthFromInput.addEventListener('input', handleFilter);
-                filterLengthToInput.addEventListener('input', handleFilter);
-                filterSeqIDFromInput.addEventListener('input', handleFilter);
-                filterSeqIDToInput.addEventListener('input', handleFilter);
-            
-                function handleFilter() {
-                    var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
-                    var filterLengthFromValue = filterLengthFromInput.value.trim();
-                    var filterLengthToValue = filterLengthToInput.value.trim();
-                    var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
-                    var filterSeqIDToValue = filterSeqIDToInput.value.trim();
-                
-                    var rows = document.querySelectorAll('#node-table tbody tr');
-                
-                    var visibleCount = 0;
-                
-                    rows.forEach(function(row) {
-                        var annotationCellValue = row.cells[5].textContent.trim().toLowerCase();
-                        var lengthCellValue = parseInt(row.cells[2].textContent.trim(), 10);
-                        var seqIDCellValue = parseFloat(row.cells[3].textContent.trim());
-                    
-                        var annotationMatch = (filterAnnotationValue === "" || annotationCellValue === filterAnnotationValue);
-                        var lengthMatch = true;
-                    
-                        if (filterLengthFromValue && filterLengthToValue) {
-                            var fromValue = parseInt(filterLengthFromValue);
-                            var toValue = parseInt(filterLengthToValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue && lengthCellValue <= toValue;
-                        } else if (filterLengthFromValue) {
-                            var fromValue = parseInt(filterLengthFromValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue;
-                        } else if (filterLengthToValue) {
-                            var toValue = parseInt(filterLengthToValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue <= toValue;
-                        }
-                    
-                        var seqIDMatch = true;
-                    
-                        if (filterSeqIDFromValue && filterSeqIDToValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue && seqIDCellValue <= toValue;
-                        } else if (filterSeqIDFromValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue;
-                        } else if (filterSeqIDToValue) {
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue <= toValue;
-                        }
-                    
-                        if (annotationMatch && lengthMatch && seqIDMatch) {
-                            row.style.display = '';
-                            visibleCount++;
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                
-                    var visibleNodes = Array.from(rows).filter(row => row.style.display !== 'none');
-                    var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim()));
-                    updateNetwork(cyNodes);
-                
-                    // Show the count in a pop-up window
-                    alert('Number of entries remaining after filtering: ' + visibleCount);
-                }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var cy = window.cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: [], // Your elements data will be loaded dynamically
+                layout: { name: 'grid', fit: true, padding: 20 },
+                style: [] // Your stylesheet for node styles
             });
-
+        
+            var loadingIndicator = document.getElementById('loading');
+            var progressBar = document.getElementById('progress-bar');
+            var progressBarContainer = document.querySelector('.progress-bar-container');
+        
+            function updateTable(selectedNodes) {
+                var tableBody = document.querySelector('#node-table tbody');
+                tableBody.innerHTML = '';
+        
+                selectedNodes.forEach(function(node) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${node.id()}</td>
+                        <td>${node.data('name')}</td>
+                        <td>${node.data('Length')}</td>
+                        <td>${node.data('SeqID_Seed')}</td>
+                        <td>${node.data('Organism')}</td>
+                        <td>${node.data('Color')}</td>
+                        <td>${node.data('Sequence')}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+        
+                populateAnnotationDropdown();
+            }
+        
+            function populateAnnotationDropdown() {
+                var dropdown = document.querySelector('#filter-annotation');
+                var annotations = new Set();
+        
+                cy.nodes().forEach(function(node) {
+                    annotations.add(node.data('Color'));
+                });
+        
+                dropdown.innerHTML = '<option value="">Select an annotation</option>'; // Reset dropdown
+        
+                annotations.forEach(function(annotation) {
+                    var option = document.createElement('option');
+                    option.value = annotation;
+                    option.textContent = annotation;
+                    dropdown.appendChild(option);
+                });
+            }
+        
+            function updateNetwork(nodes) {
+                cy.elements().hide();
+                nodes.forEach(node => {
+                    node.show();
+                    node.connectedEdges().show();
+                });
+                cy.fit();
+            }
+        
+            function loadDataInChunks(data, chunkSize) {
+                return new Promise((resolve) => {
+                    let index = 0;
+        
+                    function loadChunk() {
+                        if (index < data.length) {
+                            let chunk = data.slice(index, index + chunkSize);
+                            cy.add(chunk);
+                            index += chunkSize;
+                            let progress = (index / data.length) * 100;
+                            progressBar.style.width = progress + '%';
+                            if (!progressBarContainer.style.display || progressBarContainer.style.display === 'none') {
+                                progressBarContainer.style.display = 'block'; // Show progress bar container
+                            }
+        
+                            requestAnimationFrame(loadChunk);
+                        } else {
+                            resolve();
+                        }
+                    }
+        
+                    loadChunk();
+                });
+            }
+        
+            fetch('./static/petase_60.cyjs')
+                .then(response => response.json())
+                .then(data => {
+                    let elements = data.elements.nodes.concat(data.elements.edges);
+                    let chunkSize = 100;
+                    loadDataInChunks(elements, chunkSize).then(() => {
+                        cy.fit();
+                        updateTable(cy.nodes());
+                        loadingIndicator.style.display = 'none';
+                        progressBarContainer.style.display = 'none'; // Hide progress bar container when done
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading cyjs file:', error);
+                    loadingIndicator.textContent = 'Error loading network data';
+                });
+        
+            function sortTable(columnIndex) {
+                var table = document.querySelector('#node-table');
+                var rows = Array.from(table.rows).slice(1);
+                var sortFactor = 1;
+                var currentClass = table.rows[0].cells[columnIndex].className;
+        
+                if (currentClass.includes('asc')) {
+                    table.rows[0].cells[columnIndex].classList.remove('asc');
+                    table.rows[0].cells[columnIndex].classList.add('desc');
+                    sortFactor = -1;
+                } else if (currentClass.includes('desc')) {
+                    table.rows[0].cells[columnIndex].classList.remove('desc');
+                    table.rows[0].cells[columnIndex].classList.add('asc');
+                } else {
+                    table.rows[0].cells[columnIndex].classList.add('asc');
+                }
+        
+                rows.sort((a, b) => {
+                    var aValue = a.cells[columnIndex].textContent.trim();
+                    var bValue = b.cells[columnIndex].textContent.trim();
+                    return (parseInt(aValue) - parseInt(bValue)) * sortFactor;
+                });
+        
+                rows.forEach(row => table.appendChild(row));
+            }
+        
+            document.querySelectorAll('#node-table th').forEach((header, index) => {
+                header.addEventListener('click', () => sortTable(index));
+            });
+        
+            cy.on('select', 'node', function(event) {
+                var selectedNodes = cy.$('node:selected');
+                updateTable(selectedNodes);
+            });
+        
+            cy.on('unselect', 'node', function(event) {
+                var allNodes = cy.nodes();
+                updateTable(allNodes);
+            });
+        
+            var filterAnnotationDropdown = document.querySelector('#filter-annotation');
+            var filterLengthFromInput = document.querySelector('#filter-length-from');
+            var filterLengthToInput = document.querySelector('#filter-length-to');
+            var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
+            var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
+            var applyFiltersButton = document.querySelector('#apply-filters');
+        
+            function applyFilters() {
+                var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
+                var filterLengthFromValue = filterLengthFromInput.value.trim();
+                var filterLengthToValue = filterLengthToInput.value.trim();
+                var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
+                var filterSeqIDToValue = filterSeqIDToInput.value.trim();
+        
+                var rows = document.querySelectorAll('#node-table tbody tr');
+                var visibleCount = 0;
+        
+                rows.forEach(function(row) {
+                    var annotationCellValue = row.cells[5].textContent.trim().toLowerCase();
+                    var lengthCellValue = parseInt(row.cells[2].textContent.trim(), 10);
+                    var seqIDCellValue = parseFloat(row.cells[3].textContent.trim());
+        
+                    var annotationMatch = (filterAnnotationValue === "" || annotationCellValue === filterAnnotationValue);
+                    var lengthMatch = true;
+        
+                    if (filterLengthFromValue && filterLengthToValue) {
+                        var fromValue = parseInt(filterLengthFromValue);
+                        var toValue = parseInt(filterLengthToValue);
+                        lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue && lengthCellValue <= toValue;
+                    } else if (filterLengthFromValue) {
+                        var fromValue = parseInt(filterLengthFromValue);
+                        lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue;
+                    } else if (filterLengthToValue) {
+                        var toValue = parseInt(filterLengthToValue);
+                        lengthMatch = !isNaN(lengthCellValue) && lengthCellValue <= toValue;
+                    }
+        
+                    var seqIDMatch = true;
+        
+                    if (filterSeqIDFromValue && filterSeqIDToValue) {
+                        var fromValue = parseFloat(filterSeqIDFromValue);
+                        var toValue = parseFloat(filterSeqIDToValue);
+                        seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue && seqIDCellValue <= toValue;
+                    } else if (filterSeqIDFromValue) {
+                        var fromValue = parseFloat(filterSeqIDFromValue);
+                        seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue;
+                    } else if (filterSeqIDToValue) {
+                        var toValue = parseFloat(filterSeqIDToValue);
+                        seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue <= toValue;
+                    }
+        
+                    if (annotationMatch && lengthMatch && seqIDMatch) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+        
+                var visibleNodes = Array.from(rows).filter(row => row.style.display !== 'none');
+                var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim()));
+                updateNetwork(cyNodes);
+        
+                // Show the count in a pop-up window
+                alert('Number of entries remaining after filtering: ' + visibleCount);
+            }
+        
+            applyFiltersButton.addEventListener('click', applyFilters);
+        });
     </script>
+
 </body>
 </html>
