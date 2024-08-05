@@ -130,17 +130,17 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
     }
-    
+
     .sidebar select:focus {
         border-color: #0077C4; /* Change border color on focus */
         box-shadow: 0 0 0 2px rgba(0, 119, 196, 0.2); /* Add focus shadow */
     }
-    
+
     /* Custom arrow */
     .sidebar select::-ms-expand {
         display: none; /* Hide default arrow in IE */
     }
-    
+
     .sidebar select::before {
         content: '▼'; /* Custom arrow */
         position: absolute;
@@ -151,7 +151,7 @@
         color: #0077C4; /* Arrow color */
         pointer-events: none; /* Prevent arrow from interfering with dropdown interaction */
     }
-    
+
     .sidebar select {
         position: relative; /* Position relative for custom arrow */
         padding-right: 30px; /* Space for custom arrow */
@@ -208,6 +208,9 @@
             background-color: #0077C4;
             border-radius: 5px;
         }
+        .spaced-div {
+            margin-bottom: 20px; /* Adjust the value as needed */
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.20.1/dist/cytoscape.min.js"></script>
         </head>
@@ -223,27 +226,28 @@
                     <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
                         Filters
                     </div>
-                    <div>
+                    <div class="spaced-div">
                         <label for="filter-annotation">Annotation:</label>
                         <select id="filter-annotation">
                             <option value="">Select an annotation</option>
                             <!-- Options will be populated dynamically -->
                         </select>
                     </div>
-                
-                    <div>
+                    
+                    <div class="spaced-div">
                         <label for="filter-length">Length (Range):</label>
                         <input type="text" id="filter-length-from" placeholder="From">
                         <input type="text" id="filter-length-to" placeholder="To">
                     </div>
-                    <div>
+                    
+                    <div class="spaced-div">
                         <label for="filter-SeqID">SeqID (Range):</label>
                         <input type="text" id="filter-SeqID-from" placeholder="From">
                         <input type="text" id="filter-SeqID-to" placeholder="To">
-                    </div>               
+                    </div>             
                     <div style="margin-top: 10px; text-align: center;">    
-                        <button class="button" onclick="location.href='../'">Back</button>  
-                    </div>  
+                        <button class="button" onclick="window.location.href='https://ccbiozhaw.github.io/CyclAmidImid/'">Back</button>  
+                    </div>
                 
                 </div>
             
