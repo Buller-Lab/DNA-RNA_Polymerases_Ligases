@@ -336,289 +336,210 @@
                 </table>
             </div>
             <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var cy = window.cy = cytoscape({
-                    container: document.getElementById('cy'),
-                    elements: [], // Your elements data will be loaded dynamically
-                    layout: { name: 'grid', fit: true, padding: 20 },
-                    style: [] // Your stylesheet for node styles
-                });
-            
-                var loadingIndicator = document.getElementById('loading');
-                var progressBar = document.getElementById('progress-bar');
-                var progressBarContainer = document.querySelector('.progress-bar-container');
-            
-                function updateTable(selectedNodes) {
-                    var tableBody = document.querySelector('#node-table tbody');
-                    tableBody.innerHTML = '';
-                
-                    selectedNodes.forEach(function(node) {
-                        var row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${node.id()}</td>
-                            <td>${node.data('name')}</td>
-                            <td>${node.data('Length')}</td>
-                            <td>${node.data('SeqID_Seed')}</td>
-                            <td>${node.data('Organism')}</td>
-                            <td>${node.data('Annotation')}</td>
-                            <td>${node.data('Sequence')}</td>
-                        `;
-                        tableBody.appendChild(row);
+                document.addEventListener('DOMContentLoaded', function() {
+                    var cy = window.cy = cytoscape({
+                        container: document.getElementById('cy'),
+                        elements: [], // Your elements data will be loaded dynamically
+                        layout: { name: 'grid', fit: true, padding: 20 },
+                        style: [] // Your stylesheet for node styles
                     });
-                
-                    populateAnnotationDropdown();
-                }
             
-                function populateAnnotationDropdown() {
-                    var dropdown = document.querySelector('#filter-annotation');
-                    var annotations = new Set();
-                
-                    cy.nodes().forEach(function(node) {
-                        annotations.add(node.data('Annotation'));
-                    });
-                
-                    dropdown.innerHTML = '<option value="">Select an annotation</option>'; // Reset dropdown
-                
-                    annotations.forEach(function(annotation) {
-                        var option = document.createElement('option');
-                        option.value = annotation;
-                        option.textContent = annotation;
-                        dropdown.appendChild(option);
-                    });
-                }
+                    var loadingIndicator = document.getElementById('loading');
+                    var progressBar = document.getElementById('progress-bar');
+                    var progressBarContainer = document.querySelector('.progress-bar-container');
             
-                function updateNetwork(nodes) {
-                    cy.elements().hide();
-                    nodes.forEach(node => {
-                        node.show();
-                        node.connectedEdges().show();
-                    });
-                    cy.fit();
-                }
-            
-                function loadDataInChunks(data, chunkSize) {
-                    return new Promise((resolve) => {
-                        let index = 0;
+                    function updateTable(selectedNodes) {
+                        var tableBody = document.querySelector('#node-table tbody');
+                        tableBody.innerHTML = '';
                     
-                        function loadChunk() {
-                            if (index < data.length) {
-                                let chunk = data.slice(index, index + chunkSize);
-                                cy.add(chunk);
-                                index += chunkSize;
-                                let progress = (index / data.length) * 100;
-                                progressBar.style.width = progress + '%';
-                                if (!progressBarContainer.style.display || progressBarContainer.style.display === 'none') {
-                                    progressBarContainer.style.display = 'block'; // Show progress bar container
-                                }
-                            
-                                requestAnimationFrame(loadChunk);
-                            } else {
-                                resolve();
-                            }
-                        }
-                    
-                        loadChunk();
-                    });
-                }
-            
-                fetch('./static/DD_peptidase.cyjs')
-                    .then(response => response.json())
-                    .then(data => {
-                        let elements = data.elements.nodes.concat(data.elements.edges);
-                        let chunkSize = 100;
-                        loadDataInChunks(elements, chunkSize).then(() => {
-                            cy.fit();
-                            updateTable(cy.nodes());
-                            loadingIndicator.style.display = 'none';
-                            progressBarContainer.style.display = 'none'; // Hide progress bar container when done
+                        selectedNodes.forEach(function(node) {
+                            var row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${node.id()}</td>
+                                <td>${node.data('name')}</td>
+                                <td>${node.data('Length')}</td>
+                                <td>${node.data('SeqID_Seed')}</td>
+                                <td>${node.data('Organism')}</td>
+                                <td>${node.data('Annotation')}</td>
+                                <td>${node.data('Sequence')}</td>
+                            `;
+                            tableBody.appendChild(row);
                         });
-                    })
-                    .catch(error => {
-                        console.error('Error loading cyjs file:', error);
-                        loadingIndicator.textContent = 'Error loading network data';
-                    });
-                
-                function sortTable(columnIndex) {
-                    var table = document.querySelector('#node-table');
-                    var rows = Array.from(table.rows).slice(1);
-                    var sortFactor = 1;
-                    var currentClass = table.rows[0].cells[columnIndex].className;
-                
-                    if (currentClass.includes('asc')) {
-                        table.rows[0].cells[columnIndex].classList.remove('asc');
-                        table.rows[0].cells[columnIndex].classList.add('desc');
-                        sortFactor = -1;
-                    } else if (currentClass.includes('desc')) {
-                        table.rows[0].cells[columnIndex].classList.remove('desc');
-                        table.rows[0].cells[columnIndex].classList.add('asc');
-                    } else {
-                        table.rows[0].cells[columnIndex].classList.add('asc');
+                    
+                        populateAnnotationDropdown();
                     }
-                
-                    rows.sort((a, b) => {
-                        var aValue = a.cells[columnIndex].textContent.trim();
-                        var bValue = b.cells[columnIndex].textContent.trim();
-                        return (parseInt(aValue) - parseInt(bValue)) * sortFactor;
-                    });
-                
-                    rows.forEach(row => table.appendChild(row));
-                }
             
-                document.querySelectorAll('#node-table th').forEach((header, index) => {
-                    header.addEventListener('click', () => sortTable(index));
-                });
+                    function populateAnnotationDropdown() {
+                        var dropdown = document.querySelector('#filter-annotation');
+                        var annotations = new Set();
+                    
+                        cy.nodes().forEach(function(node) {
+                            annotations.add(node.data('Annotation'));
+                        });
+                    
+                        dropdown.innerHTML = '<option value="">Select an annotation</option>'; // Reset dropdown
+                    
+                        annotations.forEach(function(annotation) {
+                            var option = document.createElement('option');
+                            option.value = annotation;
+                            option.textContent = annotation;
+                            dropdown.appendChild(option);
+                        });
+                    }
             
-                cy.on('select', 'node', function(event) {
-                    var selectedNodes = cy.$('node:selected');
-                    updateTable(selectedNodes);
-                });
+                    function updateNetwork(nodes) {
+                        cy.elements().hide();
+                        nodes.forEach(node => {
+                            node.show();
+                            node.connectedEdges().show();
+                        });
+                        cy.fit();
+                    }
             
-                cy.on('unselect', 'node', function(event) {
-                    var allNodes = cy.nodes();
-                    updateTable(allNodes);
-                });
+                    function loadDataInChunks(data, chunkSize) {
+                        return new Promise((resolve) => {
+                            let index = 0;
+                        
+                            function loadChunk() {
+                                if (index < data.length) {
+                                    let chunk = data.slice(index, index + chunkSize);
+                                    cy.add(chunk);
+                                    index += chunkSize;
+                                    let progress = (index / data.length) * 100;
+                                    progressBar.style.width = progress + '%';
+                                    if (!progressBarContainer.style.display || progressBarContainer.style.display === 'none') {
+                                        progressBarContainer.style.display = 'block'; // Show progress bar container
+                                    }
+                                
+                                    requestAnimationFrame(loadChunk);
+                                } else {
+                                    resolve();
+                                }
+                            }
+                        
+                            loadChunk();
+                        });
+                    }
             
-                var filterAnnotationDropdown = document.querySelector('#filter-annotation');
-                var filterLengthFromInput = document.querySelector('#filter-length-from');
-                var filterLengthToInput = document.querySelector('#filter-length-to');
-                var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
-                var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
-                var applyFiltersButton = document.querySelector('#apply-filters');
-            
-                function generateExcelFile(filteredRows) {
-                    var ws = XLSX.utils.json_to_sheet(filteredRows);
-                    var wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
-                    var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-                
-                    var blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    var url = URL.createObjectURL(blob);
-                    return url;
-                }
-            
-                function applyFilters() {
-                    var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
-                    var filterLengthFromValue = filterLengthFromInput.value.trim();
-                    var filterLengthToValue = filterLengthToInput.value.trim();
-                    var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
-                    var filterSeqIDToValue = filterSeqIDToInput.value.trim();
-                
-                    var rows = document.querySelectorAll('#node-table tbody tr');
-                    var visibleCount = 0;
-                    var filteredData = [];
-                
-                    rows.forEach(function(row) {
-                        var annotationCellValue = row.cells[5].textContent.trim().toLowerCase();
-                        var lengthCellValue = parseInt(row.cells[2].textContent.trim(), 10);
-                        var seqIDCellValue = parseFloat(row.cells[3].textContent.trim());
-                    
-                        var annotationMatch = (filterAnnotationValue === "" || annotationCellValue === filterAnnotationValue);
-                        var lengthMatch = true;
-                    
-                        if (filterLengthFromValue && filterLengthToValue) {
-                            var fromValue = parseInt(filterLengthFromValue);
-                            var toValue = parseInt(filterLengthToValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue && lengthCellValue <= toValue;
-                        } else if (filterLengthFromValue) {
-                            var fromValue = parseInt(filterLengthFromValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue;
-                        } else if (filterLengthToValue) {
-                            var toValue = parseInt(filterLengthToValue);
-                            lengthMatch = !isNaN(lengthCellValue) && lengthCellValue <= toValue;
-                        }
-                    
-                        var seqIDMatch = true;
-                    
-                        if (filterSeqIDFromValue && filterSeqIDToValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue && seqIDCellValue <= toValue;
-                        } else if (filterSeqIDFromValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue;
-                        } else if (filterSeqIDToValue) {
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue <= toValue;
-                        }
-                    
-                        var match = annotationMatch && lengthMatch && seqIDMatch;
-                    
-                        if (match) {
-                            row.style.display = '';
-                            visibleCount++;
-                            filteredData.push({
-                                ID: row.cells[0].textContent,
-                                Name: row.cells[1].textContent,
-                                Length: row.cells[2].textContent,
-                                SeqID_Seed: row.cells[3].textContent,
-                                Organism: row.cells[4].textContent,
-                                Annotation: row.cells[5].textContent,
-                                Sequence: row.cells[6].textContent
+                    fetch('./static/DD_peptidase.cyjs')
+                        .then(response => response.json())
+                        .then(data => {
+                            let elements = data.elements.nodes.concat(data.elements.edges);
+                            let chunkSize = 100;
+                            loadDataInChunks(elements, chunkSize).then(() => {
+                                cy.fit();
+                                updateTable(cy.nodes());
+                                loadingIndicator.style.display = 'none';
+                                progressBarContainer.style.display = 'none'; // Hide progress bar container when done
                             });
+                        })
+                        .catch(error => {
+                            console.error('Error loading cyjs file:', error);
+                            loadingIndicator.textContent = 'Error loading network data';
+                        });
+            
+                    function sortTable(columnIndex) {
+                        var table = document.querySelector('#node-table');
+                        var rows = Array.from(table.rows).slice(1);
+                        var sortFactor = 1;
+                        var currentClass = table.rows[0].cells[columnIndex].className;
+                    
+                        if (currentClass.includes('asc')) {
+                            table.rows[0].cells[columnIndex].classList.remove('asc');
+                            table.rows[0].cells[columnIndex].classList.add('desc');
+                            sortFactor = -1;
+                        } else if (currentClass.includes('desc')) {
+                            table.rows[0].cells[columnIndex].classList.remove('desc');
+                            table.rows[0].cells[columnIndex].classList.add('asc');
                         } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                
-                    var excelURL = generateExcelFile(filteredData);
-                    var downloadLink = document.createElement('a');
-                    downloadLink.href = excelURL;
-                    downloadLink.download = 'filtered_data.xlsx';
-                    downloadLink.click();
-                
-                    var message = visibleCount > 0 ? 
-                        `Filters applied. ${visibleCount} records match the criteria.` :
-                        'No records match the criteria.';
-                    alert(message);
-                
-                    // Update Cytoscape Network
-                    var filteredNodes = cy.nodes().filter(node => {
-                        var data = node.data();
-                        var annotationMatch = filterAnnotationValue === "" || data.Annotation.toLowerCase() === filterAnnotationValue;
-                        var lengthMatch = true;
-                        var seqIDMatch = true;
-                    
-                        if (filterLengthFromValue && filterLengthToValue) {
-                            var fromValue = parseInt(filterLengthFromValue, 10);
-                            var toValue = parseInt(filterLengthToValue, 10);
-                            lengthMatch = !isNaN(data.Length) && data.Length >= fromValue && data.Length <= toValue;
-                        } else if (filterLengthFromValue) {
-                            var fromValue = parseInt(filterLengthFromValue, 10);
-                            lengthMatch = !isNaN(data.Length) && data.Length >= fromValue;
-                        } else if (filterLengthToValue) {
-                            var toValue = parseInt(filterLengthToValue, 10);
-                            lengthMatch = !isNaN(data.Length) && data.Length <= toValue;
+                            table.rows[0].cells[columnIndex].classList.add('asc');
                         }
                     
-                        if (filterSeqIDFromValue && filterSeqIDToValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed >= fromValue && data.SeqID_Seed <= toValue;
-                        } else if (filterSeqIDFromValue) {
-                            var fromValue = parseFloat(filterSeqIDFromValue);
-                            seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed >= fromValue;
-                        } else if (filterSeqIDToValue) {
-                            var toValue = parseFloat(filterSeqIDToValue);
-                            seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed <= toValue;
-                        }
+                        rows.sort((a, b) => {
+                            var aValue = a.cells[columnIndex].textContent.trim();
+                            var bValue = b.cells[columnIndex].textContent.trim();
+                            return (parseInt(aValue) - parseInt(bValue)) * sortFactor;
+                        });
                     
-                        return annotationMatch && lengthMatch && seqIDMatch;
-                    });
-                
-                    updateNetwork(filteredNodes);
-                }
+                        rows.forEach(row => table.appendChild(row));
+                    }
             
-                // Attach event listeners to filter inputs and dropdowns
-                filterAnnotationDropdown.addEventListener('change', applyFilters);
-                filterLengthFromInput.addEventListener('input', applyFilters);
-                filterLengthToInput.addEventListener('input', applyFilters);
-                filterSeqIDFromInput.addEventListener('input', applyFilters);
-                filterSeqIDToInput.addEventListener('input', applyFilters);
+                    document.querySelectorAll('#node-table th').forEach((header, index) => {
+                        header.addEventListener('click', () => sortTable(index));
+                    });
             
-                // Initial load
-                applyFilters();
-            });
-            </script>
+                    function applyFilters() {
+                        var filterAnnotationValue = document.querySelector('#filter-annotation').value.trim().toLowerCase();
+                        var filterLengthFromValue = document.querySelector('#filter-length-from').value.trim();
+                        var filterLengthToValue = document.querySelector('#filter-length-to').value.trim();
+                        var filterSeqIDFromValue = document.querySelector('#filter-SeqID-from').value.trim();
+                        var filterSeqIDToValue = document.querySelector('#filter-SeqID-to').value.trim();
+                    
+                        var nodes = cy.nodes();
+                        var filteredNodes = nodes.filter(node => {
+                            var data = node.data();
+                            var annotationMatch = filterAnnotationValue === "" || data.Annotation.toLowerCase() === filterAnnotationValue;
+                            var lengthMatch = true;
+                            var seqIDMatch = true;
+            
+                            if (filterLengthFromValue && filterLengthToValue) {
+                                var fromValue = parseInt(filterLengthFromValue, 10);
+                                var toValue = parseInt(filterLengthToValue, 10);
+                                lengthMatch = !isNaN(data.Length) && data.Length >= fromValue && data.Length <= toValue;
+                            } else if (filterLengthFromValue) {
+                                var fromValue = parseInt(filterLengthFromValue, 10);
+                                lengthMatch = !isNaN(data.Length) && data.Length >= fromValue;
+                            } else if (filterLengthToValue) {
+                                var toValue = parseInt(filterLengthToValue, 10);
+                                lengthMatch = !isNaN(data.Length) && data.Length <= toValue;
+                            }
+            
+                            if (filterSeqIDFromValue && filterSeqIDToValue) {
+                                var fromValue = parseFloat(filterSeqIDFromValue);
+                                var toValue = parseFloat(filterSeqIDToValue);
+                                seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed >= fromValue && data.SeqID_Seed <= toValue;
+                            } else if (filterSeqIDFromValue) {
+                                var fromValue = parseFloat(filterSeqIDFromValue);
+                                seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed >= fromValue;
+                            } else if (filterSeqIDToValue) {
+                                var toValue = parseFloat(filterSeqIDToValue);
+                                seqIDMatch = !isNaN(data.SeqID_Seed) && data.SeqID_Seed <= toValue;
+                            }
+            
+                            return annotationMatch && lengthMatch && seqIDMatch;
+                        });
+            
+                        updateNetwork(filteredNodes);
+                        updateTable(filteredNodes);
+                    }
+            
+                    document.querySelector('#apply-filters').addEventListener('click', function() {
+                        applyFilters();
+                        generateExcelFile(cy.nodes().map(node => ({
+                            ID: node.id(),
+                            Name: node.data('name'),
+                            Length: node.data('Length'),
+                            SeqID_Seed: node.data('SeqID_Seed'),
+                            Organism: node.data('Organism'),
+                            Annotation: node.data('Annotation'),
+                            Sequence: node.data('Sequence')
+                        })));
+                    });
+            
+                    function generateExcelFile(data) {
+                        var ws = XLSX.utils.json_to_sheet(data);
+                        var wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+                        var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                        var blob = new Blob([wbout], { type: 'application/octet-stream' });
+                        var url = URL.createObjectURL(blob);
+                        var downloadLink = document.createElement('a');
+                        downloadLink.href = url;
+                        downloadLink.download = 'filtered_data.xlsx';
+                        downloadLink.click();
+                    }
+                });
+                </script>
 
 
 </body>
