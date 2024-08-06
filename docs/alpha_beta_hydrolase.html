@@ -299,7 +299,7 @@
                         <input type="text" id="filter-SeqID-to" placeholder="To">
                     </div>      
                     <div class="spaced-div">
-                        <button id="apply-filters">Download</button>
+                        <button id="apply-filters">Apply</button>
                     </div>                           
                     <div style="margin-top: 10px; text-align: center;">    
                         <button class="button" onclick="window.location.href='https://ccbiozhaw.github.io/CyclAmidImid/'">Back</button>  
@@ -557,7 +557,11 @@
                             row.style.display = 'none';
                         }
                     });
-                
+
+                    var visibleNodes = Array.from(rows).filter(row => row.style.display !== 'none');
+                    var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim()));
+                    updateNetwork(cyNodes);
+
                     var popup = document.createElement('div');
                     popup.className = 'popup';
                     popup.innerHTML = `
