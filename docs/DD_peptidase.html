@@ -484,37 +484,24 @@
                 var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
                 var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
                 var applyFiltersButton = document.querySelector('#apply-filters');
-            
-                function generateExcelFile(filteredRows) {
-                    var ws = XLSX.utils.json_to_sheet(filteredRows);
-                    var wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
-                    var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
                 
-                    var blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    var url = URL.createObjectURL(blob);
-                    return url;
-                }
-            
-                function applyFilters() {
-                    var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
+                function handleFilter() {
+                    var filterAnnotationValue = filterAnnotationInput.value.trim().toLowerCase();
                     var filterLengthFromValue = filterLengthFromInput.value.trim();
                     var filterLengthToValue = filterLengthToInput.value.trim();
                     var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
                     var filterSeqIDToValue = filterSeqIDToInput.value.trim();
-                
+
                     var rows = document.querySelectorAll('#node-table tbody tr');
-                    var visibleCount = 0;
-                    var filteredData = [];
-                
+
                     rows.forEach(function(row) {
                         var annotationCellValue = row.cells[5].textContent.trim().toLowerCase();
                         var lengthCellValue = parseInt(row.cells[2].textContent.trim(), 10);
                         var seqIDCellValue = parseFloat(row.cells[3].textContent.trim());
-                    
-                        var annotationMatch = (filterAnnotationValue === "" || annotationCellValue === filterAnnotationValue);
+
+                        var annotationMatch = annotationCellValue.includes(filterAnnotationValue);
                         var lengthMatch = true;
-                    
+
                         if (filterLengthFromValue && filterLengthToValue) {
                             var fromValue = parseInt(filterLengthFromValue);
                             var toValue = parseInt(filterLengthToValue);
@@ -526,9 +513,9 @@
                             var toValue = parseInt(filterLengthToValue);
                             lengthMatch = !isNaN(lengthCellValue) && lengthCellValue <= toValue;
                         }
-                    
+
                         var seqIDMatch = true;
-                    
+
                         if (filterSeqIDFromValue && filterSeqIDToValue) {
                             var fromValue = parseFloat(filterSeqIDFromValue);
                             var toValue = parseFloat(filterSeqIDToValue);
@@ -540,53 +527,120 @@
                             var toValue = parseFloat(filterSeqIDToValue);
                             seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue <= toValue;
                         }
-                    
+
                         if (annotationMatch && lengthMatch && seqIDMatch) {
                             row.style.display = '';
-                            visibleCount++;
-                            filteredData.push({
-                                'ID': row.cells[0].textContent.trim(),
-                                'Name': row.cells[1].textContent.trim(),
-                                'Length': row.cells[2].textContent.trim(),
-                                'SeqID_Seed': row.cells[3].textContent.trim(),
-                                'Organism': row.cells[4].textContent.trim(),
-                                'Annotation': row.cells[5].textContent.trim(),
-                                'Sequence': row.cells[6].textContent.trim()
-                            });
                         } else {
                             row.style.display = 'none';
                         }
                     });
+
+                    var visibleNodes = Array.from(rows).filter(row => row.style.display !== 'none');
+                    var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim()));
+                    updateNetwork(cyNodes);
+            }                
+                    function generateExcelFile(filteredRows) {
+                        var ws = XLSX.utils.json_to_sheet(filteredRows);
+                        var wb = XLSX.utils.book_new();
+                        XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
+                        var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+                    
+                        var blob = new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                        var url = URL.createObjectURL(blob);
+                        return url;
+                    }
                 
-                    var popup = document.createElement('div');
-                    popup.className = 'popup';
-                    popup.innerHTML = `
-                        <h3>Filter Results</h3>
-                        <p>Filtered entries count: ${visibleCount}</p>
-                        <a href="#" id="download-excel">Download Excel File</a>
-                        <button id="close-popup">Close</button>
-                    `;
-                    var overlay = document.createElement('div');
-                    overlay.className = 'popup-overlay';
-                    document.body.appendChild(overlay);
-                    document.body.appendChild(popup);
-                
-                    document.getElementById('download-excel').addEventListener('click', function() {
-                        var url = generateExcelFile(filteredData);
-                        var a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'filtered_data.xlsx';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url); // Clean up URL object
-                    });
-                
-                    document.getElementById('close-popup').addEventListener('click', function() {
-                        document.body.removeChild(popup);
-                        document.body.removeChild(overlay);
-                    });
-                }
+                    function applyFilters() {
+                        var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
+                        var filterLengthFromValue = filterLengthFromInput.value.trim();
+                        var filterLengthToValue = filterLengthToInput.value.trim();
+                        var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
+                        var filterSeqIDToValue = filterSeqIDToInput.value.trim();
+                    
+                        var rows = document.querySelectorAll('#node-table tbody tr');
+                        var visibleCount = 0;
+                        var filteredData = [];
+                    
+                        rows.forEach(function(row) {
+                            var annotationCellValue = row.cells[5].textContent.trim().toLowerCase();
+                            var lengthCellValue = parseInt(row.cells[2].textContent.trim(), 10);
+                            var seqIDCellValue = parseFloat(row.cells[3].textContent.trim());
+                        
+                            var annotationMatch = (filterAnnotationValue === "" || annotationCellValue === filterAnnotationValue);
+                            var lengthMatch = true;
+                        
+                            if (filterLengthFromValue && filterLengthToValue) {
+                                var fromValue = parseInt(filterLengthFromValue);
+                                var toValue = parseInt(filterLengthToValue);
+                                lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue && lengthCellValue <= toValue;
+                            } else if (filterLengthFromValue) {
+                                var fromValue = parseInt(filterLengthFromValue);
+                                lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= fromValue;
+                            } else if (filterLengthToValue) {
+                                var toValue = parseInt(filterLengthToValue);
+                                lengthMatch = !isNaN(lengthCellValue) && lengthCellValue <= toValue;
+                            }
+                        
+                            var seqIDMatch = true;
+                        
+                            if (filterSeqIDFromValue && filterSeqIDToValue) {
+                                var fromValue = parseFloat(filterSeqIDFromValue);
+                                var toValue = parseFloat(filterSeqIDToValue);
+                                seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue && seqIDCellValue <= toValue;
+                            } else if (filterSeqIDFromValue) {
+                                var fromValue = parseFloat(filterSeqIDFromValue);
+                                seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= fromValue;
+                            } else if (filterSeqIDToValue) {
+                                var toValue = parseFloat(filterSeqIDToValue);
+                                seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue <= toValue;
+                            }
+                        
+                            if (annotationMatch && lengthMatch && seqIDMatch) {
+                                row.style.display = '';
+                                visibleCount++;
+                                filteredData.push({
+                                    'ID': row.cells[0].textContent.trim(),
+                                    'Name': row.cells[1].textContent.trim(),
+                                    'Length': row.cells[2].textContent.trim(),
+                                    'SeqID_Seed': row.cells[3].textContent.trim(),
+                                    'Organism': row.cells[4].textContent.trim(),
+                                    'Annotation': row.cells[5].textContent.trim(),
+                                    'Sequence': row.cells[6].textContent.trim()
+                                });
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    
+                        var popup = document.createElement('div');
+                        popup.className = 'popup';
+                        popup.innerHTML = `
+                            <h3>Filter Results</h3>
+                            <p>Filtered entries count: ${visibleCount}</p>
+                            <a href="#" id="download-excel">Download Excel File</a>
+                            <button id="close-popup">Close</button>
+                        `;
+                        var overlay = document.createElement('div');
+                        overlay.className = 'popup-overlay';
+                        document.body.appendChild(overlay);
+                        document.body.appendChild(popup);
+                    
+                        document.getElementById('download-excel').addEventListener('click', function() {
+                            var url = generateExcelFile(filteredData);
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'filtered_data.xlsx';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url); // Clean up URL object
+                        });
+                    
+                        document.getElementById('close-popup').addEventListener('click', function() {
+                            document.body.removeChild(popup);
+                            document.body.removeChild(overlay);
+                        });
+                    }
             
                 applyFiltersButton.addEventListener('click', applyFilters);
             });
