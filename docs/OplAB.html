@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCBIO CyclAmidImid</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        /* Override external styles */
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .main-content {
+            margin-top: 70px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            overflow-y: auto;
+            overflow-x: auto;
+            padding: 10px;
+            scroll-behavior: smooth;
+            flex: 1;
+            margin: 0; /* Override margin */
+        }
+
+        .button-container::-webkit-scrollbar {
+            display: auto; /* Hide scrollbar for WebKit browsers */
+        }
+
+        .button-container button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #0077C4;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0; /* Override margin */
+        }
+
+        .button-container button:hover {
+            background-color: #0076c493;
+        }
+
+        .button-container button img {
+            width: auto;
+            height: 20%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #0077C4;
+            color: white;
+            padding: 10px 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            /* New styles for background images */
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            margin-top: 10px;    
+            display: inline-block;
+            max-height: 65vh;
+        }
+
+        .bold-number {
+            font-weight: bold;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0077C4;
+            text-align: center;
+            padding: 10px 0;
+            color: white;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer button {
+            padding: 5px 10px;
+            font-size: 14px;
+            min-width: 100px;
+            min-height: 20px;
+        }
+
+        .footer button:hover {
+            background-color: rgba(95, 149, 185, 0.849)
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides</h1>
+    </div>
+    
+    <div class="main-content">
+        <div class="gallery-container">
+            <button onclick="location.href='OplA.html'">
+                <img src="./static/oplab.png" alt="">
+                <span class="bold-number">Chain A (OplA-like)</span><br>
+                Hydantoinase/<br>Oxoprolinase family<br>
+                EC: 3.5.2.9, 3.5.2.14<br>
+                e.g. 5-oxoprolinase<br>(ATP-hydrolysing)
+            </button>   
+                <button onclick="location.href='OplB.html'">
+                    <img src="./static/oplab.png" alt="">
+                    <span class="bold-number">Chain A (OplA-like)</span><br>
+                    Hydantoinase/<br>Oxoprolinase family<br>
+                    EC: 3.5.2.9, 3.5.2.14<br>
+                    e.g. 5-oxoprolinase<br>(ATP-hydrolysing)
+                </button>         
+        </div>
+        <div style="margin-top: 10px; text-align: center;">    
+            <button class="button" onclick="window.location.href='https://ccbiozhaw.github.io/CyclAmidImid/'">Back</button>  
+        </div>        
+    </div>
+
+    <div class="footer">
+        <button onclick="window.location.href='https://www.github.com/ccbiozhaw/CyclAmidImid'">GitHub</button>
+        <button onclick="window.location.href='imprint.html'">Imprint</button>
+    </div>
+
+</body>
+</html>
