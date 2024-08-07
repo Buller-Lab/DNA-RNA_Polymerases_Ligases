@@ -6,8 +6,6 @@
     <title>CCBIO CyclAmidImid</title>
     <link rel="stylesheet" href="static/style.css">
     <style>
-        /* Override external styles */
-
         body {
             font-family: Arial, sans-serif;
             text-align: center;
@@ -47,17 +45,19 @@
             overflow: hidden;
         }
 
+        /* Gallery container styles */
         .gallery-container {
-            position: relative;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            gap: 10px; /* Space between buttons */
+            flex-wrap: wrap; /* Wrap buttons if needed */
+            margin: 0 auto; /* Center container */
             width: 100%;
             max-width: 100%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
         }
 
-
-        /* Adjust button styles */
+        /* Button styles */
         .button-container button {
             padding: 10px;
             border: none;
@@ -75,10 +75,8 @@
             width: 100%;
             max-width: 300px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin: 0; /* Override margin */
         }
 
-        /* Ensure images fit within buttons */
         .button-container button img {
             max-width: 100%; /* Adjust based on your needs */
             max-height: 150px; /* Set maximum height */
@@ -92,7 +90,7 @@
         button {
             background-color: #0077C4;
             color: white;
-            padding: 10px 10px;
+            padding: 10px;
             border: none;
             cursor: pointer;
             font-size: 18px;
@@ -109,10 +107,7 @@
             background-color: #0076c493;
         }
 
-        .bold-number {
-            font-weight: bold;
-        }
-
+        /* Footer styles */
         .footer {
             position: fixed;
             bottom: 0;
@@ -135,6 +130,7 @@
         .footer button:hover {
             background-color: rgba(95, 149, 185, 0.849)
         }
+
     </style>
 </head>
 <body>
