@@ -49,8 +49,8 @@
 
         .gallery-container {
             position: relative;
-            width: 20%;
-            max-width: 20%;
+            width: 100%;
+            max-width: 100%;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -86,8 +86,8 @@
             cursor: pointer;
             font-size: 16px;
             box-sizing: border-box;
-            width: 20%;
-            max-width: 20%;
+            width: 100%;
+            max-width: 300px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             margin: 0; /* Override margin */
         }
@@ -97,6 +97,7 @@
         }
 
         .button-container button img {
+            width: auto;
             height: 20%;
             margin-bottom: 10px;
         }
@@ -118,6 +119,7 @@
             margin-top: 10px;    
             display: inline-block;
             max-height: 65vh;
+            max-width: 20vh;
         }
 
         .bold-number {
