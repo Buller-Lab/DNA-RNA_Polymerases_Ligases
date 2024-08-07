@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCBIO CyclAmidImid</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: left; /* Ensures all text is left-aligned */
+            background-color: #f0f0f0;
+            padding: 50px;
+            display: flex;
+            justify-content: center; /* Centers content horizontally */
+            min-height: 100vh; /* Ensures the body takes full viewport height */
+            width: 100%;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .main-content {
+            padding: 20px;
+            max-width: 800px; /* Adjust max-width as needed */
+            box-sizing: border-box;
+        }
+
+        .gallery-container {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            gap: 10px; /* Space between buttons */
+            flex-wrap: wrap; /* Wrap buttons if needed */
+            margin: 0 auto; /* Center container */
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .button-container button {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            background-color: #0077C4;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            font-size: 16px;
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container button img {
+            max-width: 100%;
+            max-height: 150px;
+            width: auto;
+            height: auto;
+            margin-bottom: 10px;
+            object-fit: cover;
+        }
+
+        button {
+            background-color: #0077C4;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            display: inline-block;
+            max-height: 65vh;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        .button-container button:hover {
+            background-color: #0076c493;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0077C4;
+            text-align: center;
+            padding: 10px 0;
+            color: white;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .footer button {
+            padding: 5px 10px;
+            font-size: 14px;
+            min-width: 100px;
+            min-height: 20px;
+        }
+
+        .footer button:hover {
+            background-color: rgba(95, 149, 185, 0.849);
+        }
+
+        .bold-number {
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides</h1>
+    </div>
+    
+    <div class="main-content">
+        <h2>Imprint</h2>
+        <h4>Developer: </h4>
+        <p>
+            ZHAW Life Sciences und Facility Management, Institute of Chemistry and Biotechnology (ICBT)<br>
+            Copyright © ZHAW LSFM<br>
+            Zürcher Hochschule für Angewandte Wissenschaften<br>
+            Life Sciences und Facility Management<br>
+            Grüental, Postfach CH-8820 Wädenswil<br>
+        </p>
+        <h4>Terms of use: </h4>    
+        <p>
+            This is a free resource for the community.<br>
+            The ZHAW provides no assurance or warranty that the information made available and results provided are current, correct, or complete, nor does it guarantee their quality.<br>
+            To the extent permitted by law, the ZHAW explicitly disclaims responsibility or liability for any damages, material or otherwise, resulting from access to the information it publishes and results it provides, the use or non-use of that information and results, misuse of the online connection, or technical deficiencies of any kind.<br>
+            Some of the underlying algorithms are provided by third parties and might come with their own licenses and restrictions.<br>
+        </p>
+        <div style="margin-top: 10px; text-align: center;">    
+            <button class="button" onclick="window.location.href='https://ccbiozhaw.github.io/CyclAmidImid/'">Back</button>  
+        </div>        
+    </div>
+
+    <div class="footer">
+        <button onclick="window.location.href='https://www.github.com/ccbiozhaw/CyclAmidImid'">GitHub</button>
+        <button onclick="window.location.href='imprint.html'">Imprint</button>
+    </div>
+</body>
+</html>
