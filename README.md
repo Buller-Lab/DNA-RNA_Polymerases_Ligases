@@ -1,6 +1,6 @@
 ## This is the GitHub Repository for the publication: 
 
-#  Nature’s Toolbox for the Hydrolysis of Lactams and Cyclic Imides
+#  Recent Advances in the Evolution of Polymerases and Ligases for the Synthesis of Modified Nucleic Acids
 
 Peter Stockinger, [a] and Rebecca Buller*[a]
 
