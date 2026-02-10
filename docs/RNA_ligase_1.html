@@ -286,7 +286,7 @@
                 <tr>
                     <th data-sort-by="name">name</th>
                     <th data-sort-by="Length">Length</th>
-                    <th data-sort-by="SeqID_Seed">SeqID</th>
+                    <th data-sort-by="SeqID">SeqID</th>
                     <th data-sort-by="Organism">Organism</th>
                     <th data-sort-by="Annotation">Annotation</th>
                     <th data-sort-by="Sequence">Sequence</th>
@@ -327,7 +327,7 @@
                     row.innerHTML = `
                         <td>${escapeHtml(node.data('name') || '')}</td>
                         <td>${node.data('Length') || ''}</td>
-                        <td>${node.data('SeqID_Seed') || ''}</td>
+                        <td>${node.data('SeqID') || ''}</td>
                         <td>${escapeHtml(node.data('Organism') || '')}</td>
                         <td>${escapeHtml(node.data('Annotation') || '')}</td>
                         <td>${escapeHtml(node.data('Sequence') || '')}</td>
@@ -565,5 +565,6 @@
     </script>
 </body>
 </html>
+
 
 
