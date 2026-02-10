@@ -277,7 +277,7 @@
                         CATH:<br>3.90.1300.10
                     </div>              
                     <div>
-                        <img src="./static/amidase_signature.png" alt="" style="max-width: 100%;">
+                        <img src="./static/RNA_ligase_1.png" alt="" style="max-width: 100%;">
                     </div>
                     <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
                         Filters
@@ -424,7 +424,7 @@
                     });
                 }
             
-                fetch('./static/Amidase_signature_family.cyjs')
+                fetch('./static/SeqID_network_RNA_ligase_1.cyjs')
                     .then(response => response.json())
                     .then(data => {
                         let elements = data.elements.nodes.concat(data.elements.edges);
@@ -602,3 +602,4 @@
 
 </body>
 </html>
+
