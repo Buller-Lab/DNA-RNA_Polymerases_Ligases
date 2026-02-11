@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cytoscape.js Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 100%;
+            margin-top: 10px;
+        }
+        .sidebar {
+            width: 20%;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .sidebar p, .sidebar h1, .sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6 {
+            text-align: center;
+        }
+        .network-container {
+            width: 80%;
+            padding: 20px;
+            box-sizing: border-box;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        #cy {
+            width: 100%;
+            height: 100%;
+        }
+        #table-container {
+            width: 100%;
+            max-height: 300px;
+            overflow: auto;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            white-space: nowrap;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #333;
+            cursor: pointer;
+            user-select: none;
+        }
+        td {
+            color: #666;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .sidebar, .network-container {
+                width: 100%;
+            }
+        }
+        .sidebar input[type=text] {
+            font-family: inherit;
+            font-size: 1em;
+            padding: 8px;
+            width: 95%;
+            box-sizing: border-box;
+        }
+        .sidebar select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #ffffff;
+            font-size: 16px;
+            color: #333;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            padding-right: 30px;
+        }
+        .sidebar select:focus {
+            border-color: #0077C4;
+            box-shadow: 0 0 0 2px rgba(0, 119, 196, 0.2);
+        }
+        .sidebar select::-ms-expand {
+            display: none;
+        }
+        .sidebar select::before {
+            content: '▼';
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #0077C4;
+            pointer-events: none;
+        }
+        button {
+            background-color: #0077C4;
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0076c493;
+        }
+        .loading {
+            font-size: 1.5em;
+            color: #666;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+        }
+        .progress-bar-container {
+            width: 80%;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px auto;
+            display: none;
+        }
+        .progress-bar {
+            width: 0;
+            height: 20px;
+            background-color: #0077C4;
+            border-radius: 5px;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #0077C4;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spaced-div {
+            margin-bottom: 20px;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
+        }
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .popup button {
+            margin-top: 10px;
+        }
+        .popup-hidden {
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.20.1/dist/cytoscape.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div style="margin-top: 10px; font-size: 2em; font-weight: bold;">
+                Primase-Polymerase
+            </div>
+            <div>
+                <img src="./static/Primase_Polymerase.png" alt="" style="max-width: 100%;">
+            </div>
+            <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
+                Filters
+            </div>
+            <div class="spaced-div">
+                <label for="filter-annotation">Annotation:</label>
+                <select id="filter-annotation">
+                    <option value="">Select an annotation</option>
+                </select>
+            </div>
+            <div class="spaced-div">
+                <label for="filter-length">Length (Range):</label>
+                <input type="text" id="filter-length-from" placeholder="From">
+                <input type="text" id="filter-length-to" placeholder="To">
+            </div>
+            <div class="spaced-div">
+                <label for="filter-SeqID">SeqID (Range):</label>
+                <input type="text" id="filter-SeqID-from" placeholder="From">
+                <input type="text" id="filter-SeqID-to" placeholder="To">
+            </div>
+            <div class="spaced-div">
+                <button id="apply-filters">Apply</button>
+            </div>
+            <div style="margin-top: 10px; text-align: center;">
+                <button class="button" onclick="window.location.href='https://buller-lab.github.io/DNA-RNA_Polymerases_Ligases'">Back</button>
+            </div>
+        </div>
+
+        <div class="network-container">
+            <div id="cy"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading network...</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="table-container">
+        <table id="node-table">
+            <thead>
+                <tr>
+                    <th data-sort-by="name">name</th>
+                    <th data-sort-by="Length">Length</th>
+                    <th data-sort-by="SeqID">SeqID</th>
+                    <th data-sort-by="Organism">Organism</th>
+                    <th data-sort-by="Annotation">Annotation</th>
+                    <th data-sort-by="Sequence">Sequence</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var cy = window.cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: [],
+                layout: { name: 'grid', fit: true, padding: 20 },
+                style: []
+            });
+
+            var loadingIndicator = document.getElementById('loading');
+            var progressBar = document.getElementById('progress-bar');
+            var progressBarContainer = document.querySelector('.progress-bar-container');
+
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            function updateTable(selectedNodes) {
+                var tableBody = document.querySelector('#node-table tbody');
+                tableBody.innerHTML = '';
+
+                selectedNodes.forEach(function(node) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${escapeHtml(node.data('name') || '')}</td>
+                        <td>${node.data('Length') || ''}</td>
+                        <td>${node.data('SeqID') || ''}</td>
+                        <td>${escapeHtml(node.data('Organism') || '')}</td>
+                        <td>${escapeHtml(node.data('Annotation') || '')}</td>
+                        <td>${escapeHtml(node.data('Sequence') || '')}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                populateAnnotationDropdown();
+            }
+
+            function populateAnnotationDropdown() {
+                var dropdown = document.querySelector('#filter-annotation');
+                var annotations = new Set();
+
+                cy.nodes().forEach(function(node) {
+                    if (node.data('Annotation')) annotations.add(node.data('Annotation'));
+                });
+
+                dropdown.innerHTML = '<option value="">Select an annotation</option>';
+
+                annotations.forEach(function(annotation) {
+                    var option = document.createElement('option');
+                    option.value = annotation;
+                    option.textContent = annotation;
+                    dropdown.appendChild(option);
+                });
+            }
+
+            function updateNetwork(nodes) {
+                cy.elements().hide();
+                nodes.forEach(node => {
+                    node.show();
+                    node.connectedEdges().show();
+                });
+                cy.fit();
+            }
+
+            function loadDataInChunks(data, chunkSize) {
+                return new Promise((resolve) => {
+                    let index = 0;
+
+                    function loadChunk() {
+                        if (index < data.length) {
+                            let chunk = data.slice(index, index + chunkSize);
+                            cy.add(chunk);
+                            index += chunkSize;
+                            let progress = (index / data.length) * 100;
+                            progressBar.style.width = progress + '%';
+                            if (progressBarContainer.style.display !== 'block') {
+                                progressBarContainer.style.display = 'block';
+                            }
+                            requestAnimationFrame(loadChunk);
+                        } else {
+                            resolve();
+                        }
+                    }
+
+                    loadChunk();
+                });
+            }
+
+            fetch('./static/SeqID_network_Primase_Polymerase.cyjs')
+                .then(response => response.json())
+                .then(data => {
+                    let elements = data.elements.nodes.concat(data.elements.edges);
+                    let chunkSize = 100;
+                    loadDataInChunks(elements, chunkSize).then(() => {
+                        cy.fit();
+                        updateTable(cy.nodes());
+                        loadingIndicator.style.display = 'none';
+                        progressBarContainer.style.display = 'none';
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading cyjs file:', error);
+                    loadingIndicator.textContent = 'Error loading network data';
+                });
+
+            function sortTable(columnIndex) {
+                const table = document.querySelector('#node-table');
+                const header = table.rows[0].cells[columnIndex];
+                let sortFactor = header.classList.contains('asc') ? -1 : 1;
+
+                Array.from(table.rows[0].cells).forEach(cell => {
+                    cell.classList.remove('asc', 'desc');
+                });
+                header.classList.add(sortFactor === 1 ? 'asc' : 'desc');
+
+                const rows = Array.from(table.rows).slice(1);
+
+                rows.sort((a, b) => {
+                    const aText = a.cells[columnIndex].textContent.trim();
+                    const bText = b.cells[columnIndex].textContent.trim();
+
+                    const aNum = parseFloat(aText);
+                    const bNum = parseFloat(bText);
+
+                    if (!isNaN(aNum) && !isNaN(bNum)) {
+                        return (aNum - bNum) * sortFactor;
+                    }
+
+                    return aText.localeCompare(bText, undefined, { numeric: true, sensitivity: 'base' }) * sortFactor;
+                });
+
+                rows.forEach(row => table.tBodies[0].appendChild(row));
+            }
+
+            document.querySelectorAll('#node-table th').forEach((header, index) => {
+                header.addEventListener('click', () => sortTable(index));
+            });
+
+            cy.on('select', 'node', function() {
+                var selectedNodes = cy.$('node:selected');
+                updateTable(selectedNodes);
+            });
+
+            cy.on('unselect', 'node', function() {
+                updateTable(cy.nodes());
+            });
+
+            var filterAnnotationDropdown = document.querySelector('#filter-annotation');
+            var filterLengthFromInput = document.querySelector('#filter-length-from');
+            var filterLengthToInput = document.querySelector('#filter-length-to');
+            var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
+            var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
+            var applyFiltersButton = document.querySelector('#apply-filters');
+
+            function generateExcelFile(filteredRows) {
+                var ws = XLSX.utils.json_to_sheet(filteredRows);
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+
+                return new Blob([wbout], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+            }
+
+            function downloadBlob(blob, fileName) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            }
+
+            function applyFilters() {
+                var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
+                var filterLengthFromValue = filterLengthFromInput.value.trim();
+                var filterLengthToValue = filterLengthToInput.value.trim();
+                var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
+                var filterSeqIDToValue = filterSeqIDToInput.value.trim();
+
+                var rows = document.querySelectorAll('#node-table tbody tr');
+                var visibleCount = 0;
+                var filteredData = [];
+
+                rows.forEach(function(row) {
+                    var annotationCellValue = row.cells[4].textContent.trim().toLowerCase();
+                    var lengthCellValue = parseInt(row.cells[1].textContent.trim(), 10);
+                    var seqIDCellValue = parseFloat(row.cells[2].textContent.trim());
+
+                    var annotationMatch = (filterAnnotationValue === "" || annotationCellValue.includes(filterAnnotationValue));
+                    var lengthMatch = true;
+
+                    if (filterLengthFromValue || filterLengthToValue) {
+                        var from = filterLengthFromValue ? parseInt(filterLengthFromValue) : -Infinity;
+                        var to   = filterLengthToValue   ? parseInt(filterLengthToValue)   : Infinity;
+                        lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= from && lengthCellValue <= to;
+                    }
+
+                    var seqIDMatch = true;
+                    if (filterSeqIDFromValue || filterSeqIDToValue) {
+                        var from = filterSeqIDFromValue ? parseFloat(filterSeqIDFromValue) : -Infinity;
+                        var to   = filterSeqIDToValue   ? parseFloat(filterSeqIDToValue)   : Infinity;
+                        seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= from && seqIDCellValue <= to;
+                    }
+
+                    if (annotationMatch && lengthMatch && seqIDMatch) {
+                        row.style.display = '';
+                        visibleCount++;
+                        filteredData.push({
+                            Name:       row.cells[0].textContent.trim(),
+                            Length:     row.cells[1].textContent.trim(),
+                            SeqID: row.cells[2].textContent.trim(),
+                            Organism:   row.cells[3].textContent.trim(),
+                            Annotation: row.cells[4].textContent.trim(),
+                            Sequence:   row.cells[5].textContent.trim()
+                        });
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                var visibleNodes = Array.from(rows).filter(r => r.style.display !== 'none');
+                var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim())).filter(n => n);
+                updateNetwork(cyNodes);
+
+                var popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.innerHTML = `
+                    <h3>Filter Results</h3>
+                    <p>Filtered entries count: ${visibleCount}</p>
+                    <a href="#" id="download-excel">Download Excel File</a><br><br>
+                    <button id="close-popup">Close</button>
+                `;
+                var overlay = document.createElement('div');
+                overlay.className = 'popup-overlay';
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(popup);
+
+                document.getElementById('download-excel').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (filteredData.length === 0) return;
+
+                    var blob = generateExcelFile(filteredData);
+                    downloadBlob(blob, 'filtered_data.xlsx');
+                });
+
+                document.getElementById('close-popup').addEventListener('click', function() {
+                    document.body.removeChild(popup);
+                    document.body.removeChild(overlay);
+                });
+            }
+
+            applyFiltersButton.addEventListener('click', applyFilters);
+        });
+    </script>
+</body>
+</html>
+
+
+
