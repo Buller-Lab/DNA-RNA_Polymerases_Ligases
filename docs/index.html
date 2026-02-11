@@ -112,8 +112,18 @@ h1 {
     }
 }
 
-@media (max-width: 720px) {
+@media (min-width: 720px) and (max-width: 1099px) {
     .button-container button {
+        flex: 1 1 30%;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 719px) {
+    .button-container button {
+        flex: 1 1 45%;
+        max-width: none;
+        min-width: 160px;
         font-size: 13.5px;
         padding: 10px 6px;
     }
