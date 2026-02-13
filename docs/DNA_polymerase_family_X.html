@@ -34,9 +34,6 @@
             align-items: center;
             text-align: center;
         }
-        .sidebar p, .sidebar h1, .sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6 {
-            text-align: center;
-        }
         .network-container {
             width: 80%;
             padding: 20px;
@@ -84,72 +81,26 @@
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .sidebar, .network-container {
-                width: 100%;
-            }
-        }
-        .sidebar input[type=text] {
+        .sidebar input[type=text], .sidebar select {
             font-family: inherit;
             font-size: 1em;
             padding: 8px;
             width: 95%;
             box-sizing: border-box;
-        }
-        .sidebar select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #ffffff;
-            font-size: 16px;
-            color: #333;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            padding-right: 30px;
-        }
-        .sidebar select:focus {
-            border-color: #0077C4;
-            box-shadow: 0 0 0 2px rgba(0, 119, 196, 0.2);
-        }
-        .sidebar select::-ms-expand {
-            display: none;
-        }
-        .sidebar select::before {
-            content: '▼';
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            font-size: 16px;
-            color: #0077C4;
-            pointer-events: none;
+            margin: 6px 0;
         }
         button {
             background-color: #0077C4;
             color: white;
-            padding: 20px 40px;
+            padding: 12px 24px;
             border: none;
             cursor: pointer;
-            font-size: 18px;
-            border-radius: 8px;
-            margin-right: 20px;
-            margin-bottom: 20px;
-            margin-left: 20px;
-            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            margin: 15px 10px;
         }
         button:hover {
-            background-color: #0076c493;
+            background-color: #0066b3;
         }
         .loading {
             font-size: 1.5em;
@@ -161,10 +112,7 @@
             justify-content: center;
             height: 100%;
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background-color: rgba(255, 255, 255, 0.8);
             z-index: 1000;
         }
@@ -189,7 +137,6 @@
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
-            margin-right: 10px;
             margin-bottom: 10px;
         }
         @keyframes spin {
@@ -197,74 +144,63 @@
             100% { transform: rotate(360deg); }
         }
         .spaced-div {
-            margin-bottom: 20px;
+            margin: 15px 0;
+            width: 90%;
         }
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            width: 300px;
-            text-align: center;
-        }
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-        .popup button {
-            margin-top: 10px;
-        }
-        .popup-hidden {
-            display: none;
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.20.1/dist/cytoscape.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <div style="margin-top: 10px; font-size: 2em; font-weight: bold;">
+            <div style="margin: 20px 0; font-size: 2em; font-weight: bold;">
                 Terminal deoxynucleotidyl transferase
             </div>
             <div>
-                <img src="./static/TdT.png" alt="" style="max-width: 100%;">
+                <img src="./static/TdT.png" alt="TdT" style="max-width: 100%;">
             </div>
-            <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">
+            <div style="margin: 25px 0; font-size: 1.6em; font-weight: bold;">
                 Filters
             </div>
+
             <div class="spaced-div">
                 <label for="filter-annotation">Annotation:</label>
                 <select id="filter-annotation">
-                    <option value="">Select an annotation</option>
+                    <option value="">All / no filter</option>
                 </select>
             </div>
+
             <div class="spaced-div">
-                <label for="filter-length">Length (Range):</label>
+                <label for="filter-length-from">Length (Range):</label>
                 <input type="text" id="filter-length-from" placeholder="From">
                 <input type="text" id="filter-length-to" placeholder="To">
             </div>
+
             <div class="spaced-div">
-                <label for="filter-SeqID">SeqID (Range):</label>
+                <label for="seqid-column-select">SeqID column to filter:</label>
+                <select id="seqid-column-select">
+                    <option value="">— select SeqID column —</option>
+                </select>
+            </div>
+
+            <div class="spaced-div">
+                <label for="filter-SeqID-from">SeqID range:</label>
                 <input type="text" id="filter-SeqID-from" placeholder="From">
                 <input type="text" id="filter-SeqID-to" placeholder="To">
             </div>
+
             <div class="spaced-div">
-                <button id="apply-filters">Apply</button>
+                <button id="apply-filters">Apply Filters</button>
             </div>
-            <div style="margin-top: 10px; text-align: center;">
-                <button class="button" onclick="window.location.href='https://buller-lab.github.io/DNA-RNA_Polymerases_Ligases'">Back</button>
+
+            <div style="margin-top: 30px;">
+                <button onclick="window.location.href='https://buller-lab.github.io/DNA-RNA_Polymerases_Ligases'">Back</button>
             </div>
         </div>
 
@@ -272,7 +208,7 @@
             <div id="cy"></div>
             <div id="loading" class="loading">
                 <div class="spinner"></div>
-                <div class="loading-text">Loading network...</div>
+                <div>Loading network...</div>
                 <div class="progress-bar-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
@@ -282,32 +218,23 @@
 
     <div id="table-container">
         <table id="node-table">
-            <thead>
-                <tr>
-                    <th data-sort-by="name">name</th>
-                    <th data-sort-by="Length">Length</th>
-                    <th data-sort-by="SeqID">SeqID</th>
-                    <th data-sort-by="Organism">Organism</th>
-                    <th data-sort-by="Annotation">Annotation</th>
-                    <th data-sort-by="Sequence">Sequence</th>
-                </tr>
-            </thead>
+            <thead></thead>
             <tbody></tbody>
         </table>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var cy = window.cy = cytoscape({
+        document.addEventListener('DOMContentLoaded', () => {
+            const cy = cytoscape({
                 container: document.getElementById('cy'),
                 elements: [],
-                layout: { name: 'grid', fit: true, padding: 20 },
+                layout: { name: 'grid', fit: true, padding: 30 },
                 style: []
             });
 
-            var loadingIndicator = document.getElementById('loading');
-            var progressBar = document.getElementById('progress-bar');
-            var progressBarContainer = document.querySelector('.progress-bar-container');
+            const loading = document.getElementById('loading');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.querySelector('.progress-bar-container');
 
             function escapeHtml(unsafe) {
                 return unsafe
@@ -318,253 +245,261 @@
                     .replace(/'/g, "&#039;");
             }
 
-            function updateTable(selectedNodes) {
-                var tableBody = document.querySelector('#node-table tbody');
-                tableBody.innerHTML = '';
+            function buildTableHeader(headers) {
+                const thead = document.querySelector('#node-table thead');
+                thead.innerHTML = '';
+                const tr = document.createElement('tr');
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    th.dataset.sortBy = header;
+                    tr.appendChild(th);
+                });
+                thead.appendChild(tr);
+            }
 
-                selectedNodes.forEach(function(node) {
-                    var row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${escapeHtml(node.data('name') || '')}</td>
-                        <td>${node.data('Length') || ''}</td>
-                        <td>${node.data('SeqID') || ''}</td>
-                        <td>${escapeHtml(node.data('Organism') || '')}</td>
-                        <td>${escapeHtml(node.data('Annotation') || '')}</td>
-                        <td>${escapeHtml(node.data('Sequence') || '')}</td>
-                    `;
-                    tableBody.appendChild(row);
+            function updateTable(nodes) {
+                const tbody = document.querySelector('#node-table tbody');
+                tbody.innerHTML = '';
+
+                nodes.forEach(node => {
+                    const data = node.data();
+                    const tr = document.createElement('tr');
+                    let rowHtml = '';
+
+                    Object.keys(data).forEach(key => {
+                        if (key === 'id' || key === 'name') return;
+                        const value = data[key] ?? '';
+                        rowHtml += `<td>${escapeHtml(String(value))}</td>`;
+                    });
+
+                    // name is usually first
+                    tr.innerHTML = `<td>${escapeHtml(data.name || data.id || '')}</td>` + rowHtml;
+                    tbody.appendChild(tr);
                 });
 
                 populateAnnotationDropdown();
+                populateSeqIDColumnDropdown();
             }
 
             function populateAnnotationDropdown() {
-                var dropdown = document.querySelector('#filter-annotation');
-                var annotations = new Set();
-
-                cy.nodes().forEach(function(node) {
-                    if (node.data('Annotation')) annotations.add(node.data('Annotation'));
+                const select = document.getElementById('filter-annotation');
+                const annotations = new Set();
+                cy.nodes().forEach(n => {
+                    const ann = n.data('Annotation');
+                    if (ann) annotations.add(ann);
                 });
 
-                dropdown.innerHTML = '<option value="">Select an annotation</option>';
-
-                annotations.forEach(function(annotation) {
-                    var option = document.createElement('option');
-                    option.value = annotation;
-                    option.textContent = annotation;
-                    dropdown.appendChild(option);
-                });
-            }
-
-            function updateNetwork(nodes) {
-                cy.elements().hide();
-                nodes.forEach(node => {
-                    node.show();
-                    node.connectedEdges().show();
-                });
-                cy.fit();
-            }
-
-            function loadDataInChunks(data, chunkSize) {
-                return new Promise((resolve) => {
-                    let index = 0;
-
-                    function loadChunk() {
-                        if (index < data.length) {
-                            let chunk = data.slice(index, index + chunkSize);
-                            cy.add(chunk);
-                            index += chunkSize;
-                            let progress = (index / data.length) * 100;
-                            progressBar.style.width = progress + '%';
-                            if (progressBarContainer.style.display !== 'block') {
-                                progressBarContainer.style.display = 'block';
-                            }
-                            requestAnimationFrame(loadChunk);
-                        } else {
-                            resolve();
-                        }
-                    }
-
-                    loadChunk();
+                select.innerHTML = '<option value="">All / no filter</option>';
+                [...annotations].sort().forEach(ann => {
+                    const opt = document.createElement('option');
+                    opt.value = ann;
+                    opt.textContent = ann;
+                    select.appendChild(opt);
                 });
             }
 
-            fetch('./static/SeqID_network_DNA_polymerase_family_X.cyjs')
-                .then(response => response.json())
-                .then(data => {
-                    let elements = data.elements.nodes.concat(data.elements.edges);
-                    let chunkSize = 100;
-                    loadDataInChunks(elements, chunkSize).then(() => {
-                        cy.fit();
-                        updateTable(cy.nodes());
-                        loadingIndicator.style.display = 'none';
-                        progressBarContainer.style.display = 'none';
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading cyjs file:', error);
-                    loadingIndicator.textContent = 'Error loading network data';
+            function populateSeqIDColumnDropdown() {
+                const select = document.getElementById('seqid-column-select');
+                const headers = Array.from(document.querySelectorAll('#node-table th'))
+                    .map(th => th.textContent.trim())
+                    .filter(txt => txt.startsWith('SeqID ('));
+
+                select.innerHTML = '<option value="">— select SeqID column —</option>';
+                headers.forEach(h => {
+                    const opt = document.createElement('option');
+                    opt.value = h;
+                    opt.textContent = h;
+                    select.appendChild(opt);
                 });
 
-            function sortTable(columnIndex) {
-                const table = document.querySelector('#node-table');
-                const header = table.rows[0].cells[columnIndex];
-                let sortFactor = header.classList.contains('asc') ? -1 : 1;
-
-                Array.from(table.rows[0].cells).forEach(cell => {
-                    cell.classList.remove('asc', 'desc');
-                });
-                header.classList.add(sortFactor === 1 ? 'asc' : 'desc');
-
-                const rows = Array.from(table.rows).slice(1);
-
-                rows.sort((a, b) => {
-                    const aText = a.cells[columnIndex].textContent.trim();
-                    const bText = b.cells[columnIndex].textContent.trim();
-
-                    const aNum = parseFloat(aText);
-                    const bNum = parseFloat(bText);
-
-                    if (!isNaN(aNum) && !isNaN(bNum)) {
-                        return (aNum - bNum) * sortFactor;
-                    }
-
-                    return aText.localeCompare(bText, undefined, { numeric: true, sensitivity: 'base' }) * sortFactor;
-                });
-
-                rows.forEach(row => table.tBodies[0].appendChild(row));
+                // auto-select first one if exists
+                if (headers.length > 0) {
+                    select.value = headers[0];
+                }
             }
 
-            document.querySelectorAll('#node-table th').forEach((header, index) => {
-                header.addEventListener('click', () => sortTable(index));
-            });
-
-            cy.on('select', 'node', function() {
-                var selectedNodes = cy.$('node:selected');
-                updateTable(selectedNodes);
-            });
-
-            cy.on('unselect', 'node', function() {
-                updateTable(cy.nodes());
-            });
-
-            var filterAnnotationDropdown = document.querySelector('#filter-annotation');
-            var filterLengthFromInput = document.querySelector('#filter-length-from');
-            var filterLengthToInput = document.querySelector('#filter-length-to');
-            var filterSeqIDFromInput = document.querySelector('#filter-SeqID-from');
-            var filterSeqIDToInput = document.querySelector('#filter-SeqID-to');
-            var applyFiltersButton = document.querySelector('#apply-filters');
-
-            function generateExcelFile(filteredRows) {
-                var ws = XLSX.utils.json_to_sheet(filteredRows);
-                var wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
-                var wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
-                return new Blob([wbout], {
-                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                });
-            }
-
-            function downloadBlob(blob, fileName) {
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                }, 100);
+            function getColumnIndexByName(name) {
+                const headers = Array.from(document.querySelectorAll('#node-table th'));
+                return headers.findIndex(th => th.textContent.trim() === name);
             }
 
             function applyFilters() {
-                var filterAnnotationValue = filterAnnotationDropdown.value.trim().toLowerCase();
-                var filterLengthFromValue = filterLengthFromInput.value.trim();
-                var filterLengthToValue = filterLengthToInput.value.trim();
-                var filterSeqIDFromValue = filterSeqIDFromInput.value.trim();
-                var filterSeqIDToValue = filterSeqIDToInput.value.trim();
+                const annotationFilter = document.getElementById('filter-annotation').value.trim();
+                const lenFrom = parseFloat(document.getElementById('filter-length-from').value) || -Infinity;
+                const lenTo   = parseFloat(document.getElementById('filter-length-to').value)   || Infinity;
 
-                var rows = document.querySelectorAll('#node-table tbody tr');
-                var visibleCount = 0;
-                var filteredData = [];
+                const seqColName = document.getElementById('seqid-column-select').value;
+                const seqFrom = parseFloat(document.getElementById('filter-SeqID-from').value) || -Infinity;
+                const seqTo   = parseFloat(document.getElementById('filter-SeqID-to').value)   || Infinity;
 
-                rows.forEach(function(row) {
-                    var annotationCellValue = row.cells[4].textContent.trim().toLowerCase();
-                    var lengthCellValue = parseInt(row.cells[1].textContent.trim(), 10);
-                    var seqIDCellValue = parseFloat(row.cells[2].textContent.trim());
+                const rows = document.querySelectorAll('#node-table tbody tr');
+                let visibleCount = 0;
+                const filteredData = [];
 
-                    var annotationMatch = (filterAnnotationValue === "" || annotationCellValue.includes(filterAnnotationValue));
-                    var lengthMatch = true;
+                rows.forEach(row => {
+                    const cells = row.cells;
+                    const name = cells[0]?.textContent.trim() || '';
 
-                    if (filterLengthFromValue || filterLengthToValue) {
-                        var from = filterLengthFromValue ? parseInt(filterLengthFromValue) : -Infinity;
-                        var to   = filterLengthToValue   ? parseInt(filterLengthToValue)   : Infinity;
-                        lengthMatch = !isNaN(lengthCellValue) && lengthCellValue >= from && lengthCellValue <= to;
+                    // Annotation (column index 4 in old layout, now dynamic)
+                    let annIndex = -1;
+                    cells.forEach((cell, i) => {
+                        if (cell.textContent.trim().toLowerCase().includes('annotation')) annIndex = i;
+                    });
+                    const annotation = annIndex >= 0 ? cells[annIndex]?.textContent.trim().toLowerCase() : '';
+
+                    // Length (dynamic)
+                    let lenIndex = -1;
+                    cells.forEach((cell, i) => {
+                        if (cell.textContent.trim().toLowerCase().includes('length')) lenIndex = i;
+                    });
+                    const lengthVal = lenIndex >= 0 ? parseFloat(cells[lenIndex]?.textContent.trim()) : NaN;
+
+                    // Selected SeqID column
+                    let seqIDVal = NaN;
+                    if (seqColName) {
+                        const seqIndex = getColumnIndexByName(seqColName);
+                        if (seqIndex >= 0) {
+                            seqIDVal = parseFloat(cells[seqIndex]?.textContent.trim());
+                        }
                     }
 
-                    var seqIDMatch = true;
-                    if (filterSeqIDFromValue || filterSeqIDToValue) {
-                        var from = filterSeqIDFromValue ? parseFloat(filterSeqIDFromValue) : -Infinity;
-                        var to   = filterSeqIDToValue   ? parseFloat(filterSeqIDToValue)   : Infinity;
-                        seqIDMatch = !isNaN(seqIDCellValue) && seqIDCellValue >= from && seqIDCellValue <= to;
-                    }
+                    const annMatch = !annotationFilter || annotation.includes(annotationFilter.toLowerCase());
+                    const lenMatch = isNaN(lengthVal) || (lengthVal >= lenFrom && lengthVal <= lenTo);
+                    const seqMatch = isNaN(seqIDVal) || (seqIDVal >= seqFrom && seqIDVal <= seqTo);
 
-                    if (annotationMatch && lengthMatch && seqIDMatch) {
+                    if (annMatch && lenMatch && seqMatch) {
                         row.style.display = '';
                         visibleCount++;
-                        filteredData.push({
-                            Name:       row.cells[0].textContent.trim(),
-                            Length:     row.cells[1].textContent.trim(),
-                            SeqID: row.cells[2].textContent.trim(),
-                            Organism:   row.cells[3].textContent.trim(),
-                            Annotation: row.cells[4].textContent.trim(),
-                            Sequence:   row.cells[5].textContent.trim()
+
+                        const rowData = {};
+                        cells.forEach((cell, i) => {
+                            const header = document.querySelectorAll('#node-table th')[i]?.textContent.trim() || `col${i}`;
+                            rowData[header] = cell.textContent.trim();
                         });
+                        filteredData.push(rowData);
                     } else {
                         row.style.display = 'none';
                     }
                 });
 
-                var visibleNodes = Array.from(rows).filter(r => r.style.display !== 'none');
-                var cyNodes = visibleNodes.map(row => cy.getElementById(row.cells[0].textContent.trim())).filter(n => n);
-                updateNetwork(cyNodes);
+                // Update visible nodes in cytoscape
+                const visibleIds = Array.from(rows)
+                    .filter(r => r.style.display !== 'none')
+                    .map(r => r.cells[0]?.textContent.trim())
+                    .filter(Boolean);
 
-                var popup = document.createElement('div');
+                const visibleNodes = cy.nodes().filter(n => visibleIds.includes(n.id()));
+                cy.elements().hide();
+                visibleNodes.show();
+                visibleNodes.connectedEdges().show();
+                cy.fit(visibleNodes, 30);
+
+                // Popup with count & Excel download
+                const popup = document.createElement('div');
                 popup.className = 'popup';
                 popup.innerHTML = `
                     <h3>Filter Results</h3>
-                    <p>Filtered entries count: ${visibleCount}</p>
-                    <a href="#" id="download-excel">Download Excel File</a><br><br>
+                    <p>Visible entries: ${visibleCount}</p>
+                    <a href="#" id="download-excel">Download Excel</a><br><br>
                     <button id="close-popup">Close</button>
                 `;
-                var overlay = document.createElement('div');
+
+                const overlay = document.createElement('div');
                 overlay.className = 'popup-overlay';
 
                 document.body.appendChild(overlay);
                 document.body.appendChild(popup);
 
-                document.getElementById('download-excel').addEventListener('click', function(e) {
+                document.getElementById('download-excel')?.addEventListener('click', e => {
                     e.preventDefault();
-                    if (filteredData.length === 0) return;
-
-                    var blob = generateExcelFile(filteredData);
-                    downloadBlob(blob, 'filtered_data.xlsx');
+                    if (!filteredData.length) return;
+                    const ws = XLSX.utils.json_to_sheet(filteredData);
+                    const wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Filtered');
+                    XLSX.writeFile(wb, 'filtered_data.xlsx');
                 });
 
-                document.getElementById('close-popup').addEventListener('click', function() {
-                    document.body.removeChild(popup);
-                    document.body.removeChild(overlay);
+                document.getElementById('close-popup')?.addEventListener('click', () => {
+                    popup.remove();
+                    overlay.remove();
                 });
             }
 
-            applyFiltersButton.addEventListener('click', applyFilters);
+            // Sorting
+            function sortTable(colIndex) {
+                const table = document.getElementById('node-table');
+                const header = table.rows[0].cells[colIndex];
+                const dir = header.classList.contains('asc') ? 'desc' : 'asc';
+
+                Array.from(table.rows[0].cells).forEach(c => c.classList.remove('asc', 'desc'));
+                header.classList.add(dir);
+
+                const multiplier = dir === 'asc' ? 1 : -1;
+
+                const rows = Array.from(table.tBodies[0].rows);
+                rows.sort((a, b) => {
+                    let aVal = a.cells[colIndex].textContent.trim();
+                    let bVal = b.cells[colIndex].textContent.trim();
+
+                    const aNum = parseFloat(aVal);
+                    const bNum = parseFloat(bVal);
+
+                    if (!isNaN(aNum) && !isNaN(bNum)) {
+                        return (aNum - bNum) * multiplier;
+                    }
+                    return aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: 'base' }) * multiplier;
+                });
+
+                rows.forEach(row => table.tBodies[0].appendChild(row));
+            }
+
+            // Load network
+            fetch('./static/SeqID_network_DNA_polymerase_family_X.cyjs')
+                .then(r => r.json())
+                .then(data => {
+                    const elements = [...data.elements.nodes, ...data.elements.edges];
+                    const chunkSize = 120;
+
+                    let i = 0;
+                    function loadNext() {
+                        if (i >= elements.length) {
+                            loading.style.display = 'none';
+                            progressContainer.style.display = 'none';
+                            cy.fit();
+                            updateTable(cy.nodes());
+                            return;
+                        }
+                        const chunk = elements.slice(i, i + chunkSize);
+                        cy.add(chunk);
+                        i += chunkSize;
+                        const pct = Math.min(100, Math.round((i / elements.length) * 100));
+                        progressBar.style.width = pct + '%';
+                        progressContainer.style.display = 'block';
+                        requestAnimationFrame(loadNext);
+                    }
+                    loadNext();
+                })
+                .catch(err => {
+                    console.error(err);
+                    loading.innerHTML = 'Error loading network data';
+                });
+
+            // Events
+            document.querySelector('#apply-filters').addEventListener('click', applyFilters);
+
+            document.addEventListener('click', e => {
+                if (e.target.tagName === 'TH') {
+                    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
+                    if (index >= 0) sortTable(index);
+                }
+            });
+
+            cy.on('select unselect', 'node', () => {
+                const selected = cy.$('node:selected');
+                updateTable(selected.length ? selected : cy.nodes());
+            });
         });
     </script>
 </body>
 </html>
-
-
-
