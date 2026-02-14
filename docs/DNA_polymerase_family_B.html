@@ -120,16 +120,6 @@
                 return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
             }
 
-            function normalizeSeqColName(key) {
-                if (key.startsWith('SeqID (') && key.endsWith(')')) {
-                    return 'SeqID_' + key.slice(7, -1).trim();
-                }
-                if (key.startsWith('SeqID_')) {
-                    return key;
-                }
-                return null;
-            }
-
             function buildTableHeader() {
                 const thead = document.querySelector('#node-table thead');
                 thead.innerHTML = '';
@@ -139,27 +129,22 @@
                     th.textContent = col;
                     tr.appendChild(th);
                 });
-
                 const seqColumns = new Set();
                 cy.nodes().forEach(node => {
                     Object.keys(node.data()).forEach(key => {
-                        const norm = normalizeSeqColName(key);
-                        if (norm) seqColumns.add(norm);
+                        if (key.startsWith('SeqID_')) seqColumns.add(key);
                     });
                 });
-
                 [...seqColumns].sort().forEach(col => {
                     tableHeaders.push(col);
                     const th = document.createElement('th');
                     th.textContent = col;
                     tr.appendChild(th);
                 });
-
                 tableHeaders.push('Annotation');
                 const annTh = document.createElement('th');
                 annTh.textContent = 'Annotation';
                 tr.appendChild(annTh);
-
                 thead.appendChild(tr);
             }
 
@@ -173,20 +158,11 @@
                     tr.innerHTML += `<td>${escapeHtml(data.name || data.id || '')}</td>`;
                     tr.innerHTML += `<td>${escapeHtml(data.Sequence || data.sequence || '')}</td>`;
                     tr.innerHTML += `<td>${data.Length || data.length || ''}</td>`;
-
                     tableHeaders.forEach(col => {
                         if (col.startsWith('SeqID_')) {
-                            let value = '';
-                            if (data[col]) {
-                                value = data[col];
-                            } else {
-                                const origKey = 'SeqID (' + col.slice(6) + ')';
-                                if (data[origKey]) value = data[origKey];
-                            }
-                            tr.innerHTML += `<td>${value}</td>`;
+                            tr.innerHTML += `<td>${data[col] ?? ''}</td>`;
                         }
                     });
-
                     tr.innerHTML += `<td>${escapeHtml(data.Annotation || data.annotation || '')}</td>`;
                     tableBody.appendChild(tr);
                 });
