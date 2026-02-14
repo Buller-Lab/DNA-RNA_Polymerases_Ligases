@@ -131,7 +131,7 @@
                 const seqColumns = new Set();
                 cy.nodes().forEach(node => {
                     Object.keys(node.data()).forEach(key => {
-                        if (key.startsWith('SeqID_')) seqColumns.add(key);
+                        if (key.startsWith('SeqID')) seqColumns.add(key);
                     });
                 });
                 [...seqColumns].sort().forEach(col => {
