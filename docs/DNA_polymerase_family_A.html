@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cytoscape.js Visualization – DNA polymerase family A</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f0f0f0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .container { display: flex; width: 100%; max-width: 100%; margin-top: 10px; }
+        .sidebar { width: 20%; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); box-sizing: border-box; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; text-align: center; position: sticky; top: 0; }
+        .network-container { width: 80%; padding: 20px; box-sizing: border-box; height: 100vh; overflow: hidden; position: relative; }
+        #cy { width: 100%; height: 100%; }
+        #table-container { width: 100%; max-height: 300px; overflow: auto; padding: 10px; margin-top: 20px; background: #fff; }
+        table { width: 100%; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; table-layout: fixed; }
+        th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 180px; max-width: 180px; min-width: 180px; }
+        th { background-color: #f2f2f2; font-weight: bold; text-transform: uppercase; color: #333; cursor: pointer; user-select: none; }
+        td { color: #666; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .sidebar input[type=text] { font-family: inherit; font-size: 1em; padding: 8px; width: 95%; box-sizing: border-box; }
+        .sidebar select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; background-color: #ffffff; font-size: 16px; color: #333; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; outline: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: border-color 0.3s ease, box-shadow 0.3s ease; position: relative; padding-right: 30px; }
+        .sidebar select:focus { border-color: #0077C4; box-shadow: 0 0 0 2px rgba(0,119,196,0.2); }
+        .sidebar select::-ms-expand { display: none; }
+        button { background-color: #0077C4; color: white; padding: 12px 28px; border: none; cursor: pointer; font-size: 16px; border-radius: 6px; }
+        button:hover { background-color: #0066b3; }
+        .loading { font-size: 1.5em; color: #666; display: flex; flex-direction: column; text-align: center; align-items: center; justify-content: center; height: 100%; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.8); z-index: 1000; }
+        .progress-bar-container { width: 80%; background-color: #f3f3f3; border: 1px solid #ccc; border-radius: 5px; margin: 10px auto; display: none; }
+        .progress-bar { width: 0; height: 20px; background-color: #0077C4; border-radius: 5px; }
+        .spinner { border: 8px solid #f3f3f3; border-top: 8px solid #0077C4; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spaced-div { margin-bottom: 20px; width: 95%; }
+        .popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background-color: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000; width: 300px; text-align: center; }
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+        #scroll-to-table { background: none; border: none; font-size: 2.6em; color: #0077C4; cursor: pointer; padding: 8px; transition: transform 0.2s; }
+        #scroll-to-table:hover { transform: scale(1.2); }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div style="margin-top: 10px; font-size: 2em; font-weight: bold;">DNA polymerase (family A)</div>
+            <div><img src="./static/DNA_polymerase_family_A.png" alt="" style="max-width: 100%;"></div>
+            <div style="margin-top: 10px; font-size: 1.5em; font-weight: bold;">Filters</div>
+            <div class="spaced-div">
+                <label for="filter-annotation">Annotation:</label>
+                <select id="filter-annotation"><option value="">All annotations</option></select>
+            </div>
+            <div class="spaced-div">
+                <label for="filter-length">Length (Range):</label>
+                <input type="text" id="filter-length-from" placeholder="From">
+                <input type="text" id="filter-length-to" placeholder="To">
+            </div>
+            <div class="spaced-div">
+                <label for="seqid-column-select">Seed (SeqID column):</label>
+                <select id="seqid-column-select"><option value="">— select seed —</option></select>
+            </div>
+            <div class="spaced-div">
+                <label for="filter-SeqID">SeqID (Range):</label>
+                <input type="text" id="filter-SeqID-from" placeholder="From">
+                <input type="text" id="filter-SeqID-to" placeholder="To">
+            </div>
+            <div class="spaced-div" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <button id="apply-filters">Apply</button>
+                <button onclick="window.location.href='https://buller-lab.github.io/DNA-RNA_Polymerases_Ligases'">Back</button>
+            </div>
+            <div style="margin: 30px 0 20px;">
+                <button id="scroll-to-table">↓</button>
+            </div>
+        </div>
+        <div class="network-container">
+            <div id="cy"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading network...</div>
+                <div class="progress-bar-container"><div class="progress-bar" id="progress-bar"></div></div>
+            </div>
+        </div>
+    </div>
+    <div id="table-container">
+        <table id="node-table"><thead></thead><tbody></tbody></table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var cy = window.cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: [],
+                layout: { name: 'grid', fit: true, padding: 20 },
+                style: []
+            });
+
+            var loadingIndicator = document.getElementById('loading');
+            var progressBar = document.getElementById('progress-bar');
+            var progressBarContainer = document.querySelector('.progress-bar-container');
+
+            let tableHeaders = ['Name', 'Sequence', 'Length'];
+
+            const scrollBtn = document.getElementById('scroll-to-table');
+            const tableSection = document.getElementById('table-container');
+
+            function updateArrowDirection() {
+                const rect = tableSection.getBoundingClientRect();
+                const isTableVisible = rect.top < window.innerHeight - 100 && rect.bottom > 100;
+                scrollBtn.textContent = isTableVisible ? '↑' : '↓';
+            }
+
+            scrollBtn.addEventListener('click', function() {
+                if (scrollBtn.textContent === '↓') {
+                    tableSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+
+            window.addEventListener('scroll', updateArrowDirection);
+            window.addEventListener('resize', updateArrowDirection);
+
+            function escapeHtml(unsafe) {
+                return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
+
+            function buildTableHeader() {
+                const thead = document.querySelector('#node-table thead');
+                thead.innerHTML = '';
+                const tr = document.createElement('tr');
+                ['Name', 'Sequence', 'Length'].forEach(col => {
+                    const th = document.createElement('th');
+                    th.textContent = col;
+                    tr.appendChild(th);
+                });
+                const seqColumns = new Set();
+                cy.nodes().forEach(node => {
+                    Object.keys(node.data()).forEach(key => {
+                        if (key.startsWith('SeqID_')) seqColumns.add(key);
+                    });
+                });
+                [...seqColumns].sort().forEach(col => {
+                    tableHeaders.push(col);
+                    const th = document.createElement('th');
+                    th.textContent = col;
+                    tr.appendChild(th);
+                });
+                tableHeaders.push('Annotation');
+                const annTh = document.createElement('th');
+                annTh.textContent = 'Annotation';
+                tr.appendChild(annTh);
+                thead.appendChild(tr);
+            }
+
+            function updateTable(selectedNodes) {
+                var tableBody = document.querySelector('#node-table tbody');
+                tableBody.innerHTML = '';
+                selectedNodes.forEach(function(node) {
+                    const data = node.data();
+                    const tr = document.createElement('tr');
+                    tr.dataset.nodeId = node.id();
+                    tr.innerHTML += `<td>${escapeHtml(data.name || data.id || '')}</td>`;
+                    tr.innerHTML += `<td>${escapeHtml(data.Sequence || data.sequence || '')}</td>`;
+                    tr.innerHTML += `<td>${data.Length || data.length || ''}</td>`;
+                    tableHeaders.forEach(col => {
+                        if (col.startsWith('SeqID_')) {
+                            tr.innerHTML += `<td>${data[col] ?? ''}</td>`;
+                        }
+                    });
+                    tr.innerHTML += `<td>${escapeHtml(data.Annotation || data.annotation || '')}</td>`;
+                    tableBody.appendChild(tr);
+                });
+                populateAnnotationDropdown();
+                populateSeqIDDropdown();
+            }
+
+            function populateAnnotationDropdown() {
+                var dropdown = document.querySelector('#filter-annotation');
+                var annotations = new Set();
+                cy.nodes().forEach(function(node) {
+                    if (node.data('Annotation')) annotations.add(node.data('Annotation'));
+                });
+                dropdown.innerHTML = '<option value="">All annotations</option>';
+                [...annotations].sort().forEach(function(annotation) {
+                    var option = document.createElement('option');
+                    option.value = annotation;
+                    option.textContent = annotation;
+                    dropdown.appendChild(option);
+                });
+            }
+
+            function populateSeqIDDropdown() {
+                var select = document.getElementById('seqid-column-select');
+                var seqCols = tableHeaders.filter(h => h.startsWith('SeqID_'));
+                select.innerHTML = '<option value="">— select seed —</option>';
+                seqCols.forEach(col => {
+                    var option = document.createElement('option');
+                    option.value = col;
+                    option.textContent = col;
+                    select.appendChild(option);
+                });
+                if (seqCols.length > 0) select.value = seqCols[0];
+            }
+
+            function applyFilters() {
+                var filterAnnotationValue = document.getElementById('filter-annotation').value.trim().toLowerCase();
+                var filterLengthFromValue = document.getElementById('filter-length-from').value.trim();
+                var filterLengthToValue   = document.getElementById('filter-length-to').value.trim();
+                var selectedSeqCol        = document.getElementById('seqid-column-select').value;
+                var filterSeqIDFromValue  = document.getElementById('filter-SeqID-from').value.trim();
+                var filterSeqIDToValue    = document.getElementById('filter-SeqID-to').value.trim();
+
+                var rows = document.querySelectorAll('#node-table tbody tr');
+                var visibleCount = 0;
+                var filteredData = [];
+
+                const annIdx = Array.from(document.querySelectorAll('#node-table th')).findIndex(th => th.textContent.trim() === 'Annotation');
+                const lenIdx = Array.from(document.querySelectorAll('#node-table th')).findIndex(th => th.textContent.trim() === 'Length');
+                const seqIdx = selectedSeqCol ? Array.from(document.querySelectorAll('#node-table th')).findIndex(th => th.textContent.trim() === selectedSeqCol) : -1;
+
+                rows.forEach(function(row) {
+                    var cells = row.cells;
+                    var annotation = annIdx >= 0 ? cells[annIdx].textContent.trim().toLowerCase() : '';
+                    var lengthVal  = lenIdx >= 0 ? parseFloat(cells[lenIdx].textContent.trim()) : NaN;
+                    var seqIDVal   = seqIdx >= 0 ? parseFloat(cells[seqIdx].textContent.trim()) : NaN;
+
+                    var annotationMatch = (filterAnnotationValue === "" || annotation.includes(filterAnnotationValue));
+
+                    let lengthMatch = true;
+                    const hasLenFrom = filterLengthFromValue !== "" && !isNaN(parseFloat(filterLengthFromValue));
+                    const hasLenTo   = filterLengthToValue   !== "" && !isNaN(parseFloat(filterLengthToValue));
+                    if (hasLenFrom || hasLenTo) {
+                        const from = hasLenFrom ? parseFloat(filterLengthFromValue) : -Infinity;
+                        const to   = hasLenTo   ? parseFloat(filterLengthToValue)   : +Infinity;
+                        lengthMatch = !isNaN(lengthVal) && lengthVal >= from && lengthVal <= to;
+                    }
+
+                    let seqIDMatch = true;
+                    if (selectedSeqCol) {
+                        const hasSeqFrom = filterSeqIDFromValue !== "" && !isNaN(parseFloat(filterSeqIDFromValue));
+                        const hasSeqTo   = filterSeqIDToValue   !== "" && !isNaN(parseFloat(filterSeqIDToValue));
+                        if (hasSeqFrom || hasSeqTo) {
+                            const from = hasSeqFrom ? parseFloat(filterSeqIDFromValue) : -Infinity;
+                            const to   = hasSeqTo   ? parseFloat(filterSeqIDToValue)   : +Infinity;
+                            seqIDMatch = !isNaN(seqIDVal) && seqIDVal >= from && seqIDVal <= to;
+                        }
+                    }
+
+                    if (annotationMatch && lengthMatch && seqIDMatch) {
+                        row.style.display = '';
+                        visibleCount++;
+                        const rowData = {
+                            Name: cells[0].textContent.trim(),
+                            Sequence: cells[1].textContent.trim(),
+                            Length: cells[2].textContent.trim(),
+                            Annotation: cells[cells.length - 1].textContent.trim()
+                        };
+                        tableHeaders.forEach((col, idx) => {
+                            if (col.startsWith('SeqID')) {
+                                const cellIndex = 3 + tableHeaders.slice(3, -1).indexOf(col);
+                                rowData[col] = cells[cellIndex] ? cells[cellIndex].textContent.trim() : '';
+                            }
+                        });
+                        filteredData.push(rowData);
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                const visibleNodeIds = new Set(
+                    Array.from(document.querySelectorAll('#node-table tbody tr'))
+                        .filter(r => r.style.display !== 'none')
+                        .map(r => r.dataset.nodeId)
+                );
+
+                cy.elements().hide();
+
+                if (visibleNodeIds.size === 0) {
+                    cy.elements().show();
+                    cy.fit();
+                } else {
+                    const visibleNodes = cy.nodes().filter(n => visibleNodeIds.has(n.id()));
+                    visibleNodes.show();
+                    visibleNodes.connectedEdges().show();
+                    cy.fit(visibleNodes, 30);
+                }
+
+                var popup = document.createElement('div');
+                popup.className = 'popup';
+                popup.innerHTML = `
+                    <h3>Filter Results</h3>
+                    <p>Filtered entries count: ${visibleCount}</p>
+                    <a href="#" id="download-excel">Download Excel File</a><br><br>
+                    <button id="close-popup">Close</button>
+                `;
+                var overlay = document.createElement('div');
+                overlay.className = 'popup-overlay';
+                document.body.appendChild(overlay);
+                document.body.appendChild(popup);
+
+                document.getElementById('download-excel').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (filteredData.length === 0) return;
+                    var ws = XLSX.utils.json_to_sheet(filteredData);
+                    var wb = XLSX.utils.book_new();
+                    XLSX.utils.book_append_sheet(wb, ws, 'Filtered Data');
+                    XLSX.writeFile(wb, 'filtered_data.xlsx');
+                });
+
+                document.getElementById('close-popup').addEventListener('click', function() {
+                    document.body.removeChild(popup);
+                    document.body.removeChild(overlay);
+                });
+            }
+
+            function sortTable(columnIndex) {
+                const table = document.querySelector('#node-table');
+                const header = table.rows[0].cells[columnIndex];
+                const dir = header.classList.contains('asc') ? 'desc' : 'asc';
+                Array.from(table.rows[0].cells).forEach(cell => cell.classList.remove('asc', 'desc'));
+                header.classList.add(dir);
+                const multiplier = dir === 'asc' ? 1 : -1;
+                const rows = Array.from(table.tBodies[0].rows);
+                rows.sort((a, b) => {
+                    let x = a.cells[columnIndex].textContent.trim();
+                    let y = b.cells[columnIndex].textContent.trim();
+                    const xn = parseFloat(x);
+                    const yn = parseFloat(y);
+                    if (!isNaN(xn) && !isNaN(yn)) return (xn - yn) * multiplier;
+                    return x.localeCompare(y, undefined, { numeric: true, sensitivity: 'base' }) * multiplier;
+                });
+                rows.forEach(row => table.tBodies[0].appendChild(row));
+            }
+
+            document.addEventListener('click', function(e) {
+                if (e.target.tagName === 'TH') {
+                    const index = Array.from(e.target.parentNode.children).indexOf(e.target);
+                    sortTable(index);
+                }
+            });
+
+            cy.on('select', 'node', function() {
+                var selectedNodes = cy.$('node:selected');
+                updateTable(selectedNodes.length ? selectedNodes : cy.nodes());
+            });
+
+            cy.on('unselect', 'node', function() {
+                updateTable(cy.nodes());
+            });
+
+            document.getElementById('apply-filters').addEventListener('click', applyFilters);
+
+            const networkFiles = [
+                './static/SeqID_network_DNA_polymerase_family_A_part1.cyjs',
+                './static/SeqID_network_DNA_polymerase_family_A_part2.cyjs'                
+            ];
+
+            function mergeElements(target, source) {
+                const nodeMap = new Map(target.nodes.map(n => [n.data.id, n]));
+                source.nodes.forEach(srcNode => {
+                    const id = srcNode.data.id;
+                    if (!nodeMap.has(id)) {
+                        target.nodes.push(srcNode);
+                        nodeMap.set(id, srcNode);
+                    }
+                });
+                target.edges.push(...source.edges);
+            }
+
+            Promise.all(
+                networkFiles.map(file =>
+                    fetch(file).then(r => {
+                        if (!r.ok) throw new Error(`Failed to load ${file}`);
+                        return r.json();
+                    })
+                )
+            )
+            .then(jsons => {
+                const combined = { nodes: [], edges: [] };
+                jsons.forEach(data => {
+                    const elements = data.elements || data;
+                    mergeElements(combined, elements);
+                });
+
+                const allElements = [...combined.nodes, ...combined.edges];
+                let chunkSize = 150;
+                let index = 0;
+
+                function loadChunk() {
+                    if (index < allElements.length) {
+                        let chunk = allElements.slice(index, index + chunkSize);
+                        cy.add(chunk);
+                        index += chunkSize;
+                        let progress = (index / allElements.length) * 100;
+                        progressBar.style.width = progress + '%';
+                        progressBarContainer.style.display = 'block';
+                        requestAnimationFrame(loadChunk);
+                    } else {
+                        cy.fit();
+                        buildTableHeader();
+                        updateTable(cy.nodes());
+                        loadingIndicator.style.display = 'none';
+                        progressBarContainer.style.display = 'none';
+                        updateArrowDirection();
+                    }
+                }
+                loadChunk();
+            })
+            .catch(error => {
+                console.error('Error loading network parts:', error);
+                loadingIndicator.innerHTML = '<div class="spinner"></div>Error loading network parts<br><small>Check console for details</small>';
+            });
+        });
+    </script>
+</body>
+</html>
