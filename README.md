@@ -27,9 +27,9 @@ Databases can be found as .m8 files (can be opened via Excel), Cytoscape Session
 https://buller-lab.github.io/DNA-RNA_Polymerases_Ligases/
 
 ## Methods and Code Availability
-Databases of each fold archetype (superfamily)  were build using MMseqs2 (https://github.com/soedinglab/MMseqs2) easy-search (against NCBI NR database) and easy-cluster (60% SeqID cutoff) functionalities.
-Seed sequences are provided as fasta files (seeds.fasta). Extremophilic annotations were collected from BacDive database (https://bacdive.dsmz.de/) and were linked via TaxIDs (see bacdive_taxids)).
-The python script that was used to collect and cluster the sequences is also provided (see get_homologs.py). 
+Databases of each fold archetype (superfamily)  were build using MMseqs2 (https://github.com/soedinglab/MMseqs2) easy-search (against UniProt database) and easy-cluster (60% SeqID cutoff) functionalities.
+Seed sequences are provided as fasta files (seeds.fasta). Extremophilic annotations were collected from BacDive database (https://bacdive.dsmz.de/) and were linked via TaxIDs (see bacdive_taxids).
+The python script that was used to collect and cluster the sequences is also provided (see get_homologs.py). Network views were created in Cytoscape and saved as .cyjs file. When the cyjs exceeded 100 MB, it was split into two files using split_json.py to comply with GitHub file size limit.
 
 ## Citation
 Please cite the following review if you found this ressource helpful:
