@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DNA-RNA_Polymerases_Ligases</title>
-
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -45,17 +44,17 @@ h1 {
 
 .gallery-container {
     width: 100%;
-    max-width: 1800px;
+    max-width: 1920px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
 }
 
 .row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 14px;
     justify-content: center;
     align-items: stretch;
     padding: 8px;
@@ -63,9 +62,9 @@ h1 {
 
 .button-container button {
     flex: 1 1 160px;
-    max-width: 240px;
     min-width: 135px;
-    padding: 12px 8px;
+    max-width: 260px;
+    padding: 14px 10px;
     border: none;
     border-radius: 10px;
     background-color: #0077C4;
@@ -85,7 +84,7 @@ h1 {
 .button-container button:hover {
     background-color: #0062a3;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
 .button-container button img {
@@ -102,43 +101,51 @@ h1 {
     line-height: 1.3;
 }
 
-@media (min-width: 1200px) {
+/* ───────────────────────────────
+   Large screens → aim for 7 buttons
+─────────────────────────────── */
+@media (min-width: 1100px) {
     .row {
-        gap: 14px;
+        gap: 16px;
     }
     .button-container button {
-        flex: 1 1 15.2%;
+        flex: 0 1 calc((100% - 6 * 16px) / 7);
         max-width: 245px;
+        min-width: 145px;
     }
 }
 
-@media (min-width: 1150px) and (max-width: 1199px) {
+/* Borderline large → still try 7 */
+@media (min-width: 1000px) and (max-width: 1099px) {
     .button-container button {
-        flex: 1 1 15.8%;
-        max-width: 240px;
+        flex: 0 1 calc((100% - 6 * 14px) / 7);
+        max-width: 230px;
     }
 }
 
-@media (min-width: 720px) and (max-width: 1149px) {
+/* Tablets & smaller laptops → 3–4 per row */
+@media (min-width: 720px) and (max-width: 999px) {
     .button-container button {
         flex: 1 1 30%;
         max-width: 280px;
     }
 }
 
+/* Mobile — 2 per row */
 @media (max-width: 719px) {
     .button-container button {
         flex: 1 1 45%;
         max-width: none;
         min-width: 160px;
         font-size: 13.5px;
-        padding: 10px 6px;
+        padding: 12px 8px;
     }
     .button-container button img {
-        max-height: 90px;
+        max-height: 92px;
     }
 }
 
+/* Very small phones — stack vertically */
 @media (max-width: 400px) {
     .button-container button {
         flex: 1 1 100%;
@@ -184,10 +191,12 @@ h1 {
 
 <div class="main-content">
     <div class="gallery-container">
+
+        <!-- First row – 7 buttons -->
         <div class="row button-container">
             <button onclick="location.href='./DNA_polymerase_family_X.html'">
                 <img src="./static/TdT.png" alt="DNA_polymerase_family_X">
-                <span class="bold-number">DNA polymerase <br> (family X)</span><br>
+                <span class="bold-number">DNA polymerase <br>(family X)</span><br>
                 EC: 2.7.7.31 & 2.7.7.7<br>
                 e.g. Human TdT or RvPolX
             </button>
@@ -211,33 +220,35 @@ h1 {
             </button>
             <button onclick="location.href='./DNA_polymerase_family_A.html'">
                 <img src="./static/DNA_polymerase_family_A.png" alt="DNA pol family A">
-                <span class="bold-number">DNA polymerase <br> (family A)</span><br>
+                <span class="bold-number">DNA polymerase <br>(family A)</span><br>
                 EC: 2.7.7.7<br>
-                e.g. Humal Pol θ or Bst DNA polymerase
+                e.g. Human Pol θ or Bst DNA polymerase
             </button>
             <button onclick="location.href='./DNA_polymerase_family_B.html'">
                 <img src="./static/DNA_polymerase_family_B.png" alt="DNA pol family B">
-                <span class="bold-number">DNA polymerase <br> (family B)</span><br>
+                <span class="bold-number">DNA polymerase <br>(family B)</span><br>
                 EC: 2.7.7.7<br>
                 e.g. Thermostable SFM4-3 or Tgo
             </button>
-        </div>
-        <div class="row button-container">
             <button onclick="location.href='./RNA_polymerase.html'">
                 <img src="./static/RNA_polymerase.png" alt="RNA Polymerase">
-                <span class="bold-number">RNA Polymerase <br> (single subunit)</span><br>
+                <span class="bold-number">RNA Polymerase <br>(single subunit)</span><br>
                 EC: 2.7.7.6<br>
                 e.g. T7 RNA Polymerase
             </button>
+        </div>
+
+        <!-- Second row – 6 buttons -->
+        <div class="row button-container">
             <button onclick="location.href='./ATP_dependent_DNA_ligase.html'">
                 <img src="./static/ATP_dependent_DNA_ligase.png" alt="ATP-dep. DNA ligase">
-                <span class="bold-number">DNA ligase <br> (ATP-dependent)</span><br>
+                <span class="bold-number">DNA ligase <br>(ATP-dependent)</span><br>
                 EC: 6.5.1.1<br>
                 e.g. T4 DNA Ligase
             </button>
             <button onclick="location.href='./NAD_dependent_DNA_ligase.html'">
                 <img src="./static/NAD_dependent_DNA_ligase.png" alt="NAD-dep. DNA ligase">
-                <span class="bold-number">DNA ligase <br> (NAD-dependent)</span><br>
+                <span class="bold-number">DNA ligase <br>(NAD-dependent)</span><br>
                 EC: 6.5.1.2<br>
                 e.g. DNA Ligase (ligA)
             </button>
@@ -246,7 +257,7 @@ h1 {
                 <span class="bold-number">RNA ligase 1</span><br>
                 EC: 6.5.1.3<br>
                 e.g. T4 RNA ligase 1
-            </button>            
+            </button>
             <button onclick="location.href='./RNA_ligase_2.html'">
                 <img src="./static/RNA_ligase_2.png" alt="RNA ligase 2">
                 <span class="bold-number">RNA ligase 2</span><br>
@@ -258,12 +269,12 @@ h1 {
                 <span class="bold-number">RNA ligase 3</span><br>
                 EC: 6.5.1.3<br>
                 e.g. Thermophilic PpaRnl
-            </button>            
+            </button>
             <button onclick="location.href='./RNA_splicing_ligase.html'">
                 <img src="./static/RNA_splicing_ligase.png" alt="RNA splicing ligase">
                 <span class="bold-number">RNA splicing ligase</span><br>
                 EC: 6.5.1.8<br>
-                e.g. RNA-splicing ligase <br> (RtcB)
+                e.g. RNA-splicing ligase <br>(RtcB)
             </button>
         </div>
 
