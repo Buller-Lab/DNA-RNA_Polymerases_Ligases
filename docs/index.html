@@ -283,7 +283,7 @@ h1 {
 
 <div class="footer">
     <button onclick="window.location.href='https://www.github.com/Buller-Lab/DNA-RNA_Polymerases_Ligases'">GitHub</button>
-    <button onclick="window.open('Overview.pdf', '_blank')">Overview Table</button>
+    <button onclick="const a = document.createElement('a'); a.href = 'Overview.pdf'; a.download = 'Overview.pdf'; document.body.appendChild(a); a.click(); document.body.removeChild(a);">Overview Table</button>
     <button onclick="window.location.href='imprint.html'">Imprint</button>
 </div>
 
