@@ -33,4 +33,8 @@ The python script that was used to collect and cluster the sequences is also pro
 
 ## Citation
 Please cite the following review if you found this ressource helpful:
-XYZ
+
+Discovery and engineering of polymerases and ligases for the synthesis of modified nucleic acids
+
+https://doi.org/10.1016/j.cbpa.2026.102697
+
