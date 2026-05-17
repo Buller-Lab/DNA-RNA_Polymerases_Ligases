@@ -1,6 +1,6 @@
 ## This is the GitHub Repository for the publication: 
 
-#  Recent Advances in the Evolution of Polymerases and Ligases for the Synthesis of Modified Nucleic Acids
+#  Discovery and engineering of polymerases and ligases for the synthesis of modified nucleic acids
 
 Sumire Honda Malca,[a] Peter Stockinger,[b] Miquel Estévez-Gay,[b] and Rebecca Buller*[a],[b]
 
@@ -9,10 +9,6 @@ Sumire Honda Malca,[a] Peter Stockinger,[b] Miquel Estévez-Gay,[b] and Rebecca 
 
 
 [b]	Department of Chemistry, Biochemistry and Pharmacy, University of Bern, Freiestrasse 3, 3012 Bern, Switzerland
-
-
-
-Keywords: X · Y · Z 
 
 
 
@@ -34,7 +30,6 @@ The python script that was used to collect and cluster the sequences is also pro
 ## Citation
 Please cite the following review if you found this ressource helpful:
 
-Discovery and engineering of polymerases and ligases for the synthesis of modified nucleic acids
 
 https://doi.org/10.1016/j.cbpa.2026.102697
 
